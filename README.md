@@ -13,7 +13,7 @@
 
 # Installation
 ---------------
-* Click "clone or download" and Download ZIP iyzipay (folder)  then Install with PrestaShop Module  installer page
+* Click “clone or download” and create iyzipay.zip file for iyzipay file then install with PrestaShop Module installation page
 
 * <a href="https://dev.iyzipay.com/tr/acik-kaynak/prestashop">Detailed Info</a>
 
