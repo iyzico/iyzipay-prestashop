@@ -16,8 +16,6 @@
 * Click “clone or download” and create iyzipay.zip file for iyzipay folder then install with PrestaShop Module installation page
 * Click “clone or download” and Unzip the folder and upload the files to prestahshop modules directory where other modules runs.
 
-   if you have already installed older version of plugin please uninstall it and remove all files related to this plugin and install this new (Must needed step).
-
 * <a href="https://dev.iyzipay.com/tr/acik-kaynak/prestashop">Detailed Info</a>
 
 # Additional Features
