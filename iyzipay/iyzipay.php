@@ -1,5 +1,4 @@
 <?php
-
 /**
 * 2007-2018 PrestaShop
 *
@@ -91,16 +90,14 @@ class Iyzipay extends PaymentModule
      */
     public function install()
     {
-        if (extension_loaded('curl') == false)
-        {
+        if (extension_loaded('curl') == false) {
             $this->_errors[] = $this->l('You have to enable the cURL extension on your server to install this module');
             return false;
         }
 
         $iso_code = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT'));
 
-        if (in_array($iso_code, $this->limited_countries) == false)
-        {
+        if (in_array($iso_code, $this->limited_countries) == false) {
             $this->_errors[] = $this->l('This module is not available in your country');
             return false;
         }
@@ -134,7 +131,6 @@ class Iyzipay extends PaymentModule
         && Configuration::deleteByName('iyzipay_overlay_position')
         && Configuration::deleteByName('iyzipay_overlay_token')
         && parent::uninstall();
-
     }
 
     /**
@@ -142,7 +138,6 @@ class Iyzipay extends PaymentModule
      */
     public function getContent()
     {
-
         /**
          * If values have been submitted in the form, process.
          */
@@ -192,13 +187,13 @@ class Iyzipay extends PaymentModule
     /**
      * Create the structure of your form.
      */
-   protected function getConfigForm()
+    protected function getConfigForm()
     {
         return array(
             'form' => array(
                 'legend' => array(
-                'title' => $this->l('Settings'),
-                'icon' => 'icon-cogs',
+                    'title' => $this->l('Settings'),
+                    'icon' => 'icon-cogs',
                 ),
                 'input' => array(
                     array(
@@ -207,13 +202,13 @@ class Iyzipay extends PaymentModule
                         'name' => 'iyzipay_api_type',
                         'required' => true,
                         'options' => array(
-                           'query' => array(
-                               array('id' => 'https://api.iyzipay.com', 'name' => 'Live'),
-                               array('id' => 'https://sandbox-api.iyzipay.com', 'name' => 'Sandbox / Test'),
-                           ),
-                           'id' => 'id',
-                           'name' => 'name',
-                       ),
+                            'query' => array(
+                                array('id' => 'https://api.iyzipay.com', 'name' => 'Live'),
+                                array('id' => 'https://sandbox-api.iyzipay.com', 'name' => 'Sandbox / Test'),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
                     ),
                     array(
                         'col' => 4,
@@ -233,7 +228,7 @@ class Iyzipay extends PaymentModule
                         'col' => 9,
                         'type' => 'text',
                         'name' => 'iyzipay_option_text',
-                        'label' => $this->l('Payment Text')
+                        'label' => $this->l('Payment Text'),
                     ),
                     array(
                         'type' => 'select',
@@ -242,13 +237,13 @@ class Iyzipay extends PaymentModule
                         'required' => true,
                         'is_bool' => true,
                         'options' => array(
-                           'query' => array(
-                               array('id' => 'responsive', 'name' => 'Responsive'),
-                               array('id' => 'popup', 'name' => 'Popup'),
-                           ),
-                           'id' => 'id',
-                           'name' => 'name',
-                       ),
+                            'query' => array(
+                                array('id' => 'responsive', 'name' => 'Responsive'),
+                                array('id' => 'popup', 'name' => 'Popup'),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
                     ),
                     array(
                         'type' => 'select',
@@ -257,14 +252,14 @@ class Iyzipay extends PaymentModule
                         'required' => true,
                         'is_bool' => true,
                         'options' => array(
-                           'query' => array(
-                               array('id' => 'bottomLeft', 'name' => $this->l('Overlay Bottom Left')),
-                               array('id' => 'bottomRight', 'name' => $this->l('Overlay Bottom Right')),
-                               array('id' => 'hidden', 'name' => $this->l('Overlay Hidden')),
-                           ),
-                           'id' => 'id',
-                           'name' => 'name',
-                       ),
+                            'query' => array(
+                                array('id' => 'bottomLeft', 'name' => $this->l('Overlay Bottom Left')),
+                                array('id' => 'bottomRight', 'name' => $this->l('Overlay Bottom Right')),
+                                array('id' => 'hidden', 'name' => $this->l('Overlay Hidden')),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
                     ),
                     array(
                         'type' => 'hidden',
@@ -281,18 +276,18 @@ class Iyzipay extends PaymentModule
     /**
      * Set values for the inputs.
      */
-  
+
     protected function getConfigFormValues()
     {
         return array(
-            'iyzipay_api_type'                  => Configuration::get('iyzipay_api_type', true),
-            'iyzipay_api_key'                   => Configuration::get('iyzipay_api_key', true),
-            'iyzipay_secret_key'                => Configuration::get('iyzipay_secret_key', true),
-            'iyzipay_module_status'             => Configuration::get('iyzipay_module_status', true),
-            'iyzipay_option_text'               => Configuration::get('iyzipay_option_text', true),
-            'iyzipay_display'                   => Configuration::get('iyzipay_display', true),
-            'iyzipay_overlay_position'          => Configuration::get('iyzipay_overlay_position',true),
-            'iyzipay_overlay_token'             => Configuration::get('iyzipay_overlay_token',true),
+            'iyzipay_api_type' => Configuration::get('iyzipay_api_type', true),
+            'iyzipay_api_key' => Configuration::get('iyzipay_api_key', true),
+            'iyzipay_secret_key' => Configuration::get('iyzipay_secret_key', true),
+            'iyzipay_module_status' => Configuration::get('iyzipay_module_status', true),
+            'iyzipay_option_text' => Configuration::get('iyzipay_option_text', true),
+            'iyzipay_display' => Configuration::get('iyzipay_display', true),
+            'iyzipay_overlay_position' => Configuration::get('iyzipay_overlay_position', true),
+            'iyzipay_overlay_token' => Configuration::get('iyzipay_overlay_token', true),
         );
     }
 
@@ -306,50 +301,44 @@ class Iyzipay extends PaymentModule
 
         foreach (array_keys($form_values) as $key) {
             Configuration::updateValue($key, Tools::getValue($key));
-        }   
+        }
 
         /*  Set iyziTitle */
         $this->setIyziTitle();
 
         /* Call Overlay Script */
+        $isoCode = $this->context->language->iso_code;
+        $apiKey = Tools::getValue('iyzipay_api_key');
+        $secretKey = Tools::getValue('iyzipay_secret_key');
+        $randNumer = rand(100000, 99999999);
 
-            $isoCode    = $this->context->language->iso_code;
-            $apiKey     = Tools::getValue('iyzipay_api_key');
-            $secretKey  = Tools::getValue('iyzipay_secret_key');
-            $randNumer  = rand(100000,99999999);
+        $overlayScriptObject = IyzipayOverlayScript::generateOverlayScriptObject($isoCode, $randNumer);
+        $pkiString = IyzipayPkiStringBuilder::pkiStringGenerate($overlayScriptObject);
+        $authorization = IyzipayPkiStringBuilder::authorization($pkiString, $apiKey, $secretKey, $randNumer);
+        $overlayScriptJson = json_encode($overlayScriptObject, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $requestResponse = IyzipayRequest::callOverlayScript($overlayScriptJson, $authorization, false);
 
-            $overlayScriptObject    = IyzipayOverlayScript::generateOverlayScriptObject($apiKey,$secretKey,$isoCode,$randNumer);
-            $pkiString              = IyzipayPkiStringBuilder::pkiStringGenerate($overlayScriptObject);
-            $authorization          = IyzipayPkiStringBuilder::authorization($pkiString,$apiKey,$secretKey,$randNumer); 
-            $overlayScriptJson      = json_encode($overlayScriptObject,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-            $requestResponse        = IyzipayRequest::callOverlayScript(false,$overlayScriptJson,$authorization);
-
-            if(isset($requestResponse->protectedShopId)) {
-
-                Configuration::updateValue('iyzipay_overlay_token',$requestResponse->protectedShopId);
-
-            } else {
-                
-                Configuration::updateValue('iyzipay_overlay_token',false);
-
-            }
-      
-
+        if (isset($requestResponse->protectedShopId)) {
+            Configuration::updateValue('iyzipay_overlay_token', $requestResponse->protectedShopId);
+        } else {
+            Configuration::updateValue('iyzipay_overlay_token', false);
+        }
     }
-    
-    private function setIyziTitle() {
 
-        $title =  Configuration::get('iyzipay_option_text');
+    /**
+     * @return bool
+     */
+    private function setIyziTitle()
+    {
+        $title = Configuration::get('iyzipay_option_text');
 
-        if(!$title) {
-
-             Configuration::updateValue('iyzipay_option_text','tr=Kredi ve Banka Kartı ile Ödeme - iyzico|en=Credit and Debit Card iyzico|fr=Credit and Debit Card iyzico');
-        
+        if (!$title) {
+            Configuration::updateValue('iyzipay_option_text', 'tr=Kredi ve Banka Kartı ile Ödeme - iyzico|en=Credit and Debit Card iyzico|fr=Credit and Debit Card iyzico');
         }
 
         return true;
-
     }
+
     /**
     * Add the CSS & JavaScript files you want to be loaded in the BO.
     */
@@ -367,20 +356,15 @@ class Iyzipay extends PaymentModule
      */
     public function hookFooter($params)
     {
-
         $this->context->smarty->assign(
-              array(
-                  'token'    => Configuration::get('iyzipay_overlay_token'),
-                  'position' => Configuration::get('iyzipay_overlay_position'),
-              )
-          );
+            array(
+                'token' => Configuration::get('iyzipay_overlay_token'),
+                'position' => Configuration::get('iyzipay_overlay_position'),
+            )
+        );
 
-          return $this->display(__FILE__, 'footer.tpl');
-
+        return $this->display(__FILE__, 'footer.tpl');
     }
-
-
-
 
     /**
      * This method is used to render the payment button,
@@ -389,89 +373,73 @@ class Iyzipay extends PaymentModule
 
     public function hookPaymentOptions($params)
     {
-  
         $iyzicoCheckoutFormResponse = $this->checkoutFormGenerate($params);
-        
+
         $phpCheckVersion = $this->versionCheck();
 
-        if($phpCheckVersion) {
-
+        if ($phpCheckVersion) {
             return $this->errorAssign($phpCheckVersion);
-        
         }
 
-        if(!is_object($iyzicoCheckoutFormResponse)) {
-
+        if (!is_object($iyzicoCheckoutFormResponse)) {
             return $this->errorAssign($iyzicoCheckoutFormResponse);
-
         }
 
-        
         return $this->successAssign($iyzicoCheckoutFormResponse);
-    
     }
 
-    public function checkoutFormGenerate($params) {
+    /**
+     * @param $params
+     * @return mixed|string
+     */
+    public function checkoutFormGenerate($params)
+    {
+        $this->context->cookie->totalPrice = false;
+        $this->context->cookie->installmentFee = false;
+        $this->context->cookie->iyziToken = false;
 
+        $currency = $this->getCurrency($params['cart']->id_currency);
+        $shipping = $params['cart']->getOrderTotal(true, Cart::ONLY_SHIPPING);
+        $basketItems = $params['cart']->getProducts();
 
-        $this->context->cookie->totalPrice      = false;
-        $this->context->cookie->installmentFee  = false;
-        $this->context->cookie->iyziToken       = false;
+        $context = $this->context;
+        $billingAddress = new Address($params['cart']->id_address_invoice);
+        $shippingAddress = new Address($params['cart']->id_address_delivery);
+        $billingAddress->email = $params['cookie']->email;
+        $shippingAddress->email = $params['cookie']->email;
+        $apiKey = Configuration::get('iyzipay_api_key');
+        $secretKey = Configuration::get('iyzipay_secret_key');
+        $rand = rand(100000, 99999999);
+        $endpoint = Configuration::get('iyzipay_api_type');
 
-        $currency                   = $this->getCurrency($params['cart']->id_currency);
-        $totalPrice                 = $params['cart']->getOrderTotal();
-        $shipping                   = $params['cart']->getOrderTotal(true,Cart::ONLY_SHIPPING);
-        $basketItems                = $params['cart']->getProducts();
+        $iyzico = IyzipayCheckoutFormObject::option($params, $currency, $context, $apiKey);
+        $iyzico->buyer = IyzipayCheckoutFormObject::buyer($billingAddress);
+        $iyzico->shippingAddress = IyzipayCheckoutFormObject::shippingAddress($shippingAddress);
+        $iyzico->billingAddress = IyzipayCheckoutFormObject::billingAddress($billingAddress);
+        $iyzico->basketItems = IyzipayCheckoutFormObject::basketItems($basketItems, $shipping);
+        $iyzico = IyzipayCheckoutFormObject::checkoutFormObjectSort($iyzico);
 
-        $context                    = $this->context;
-        $orderId                    = $params['cookie']->id_cart;
-        $billingAddress             = new Address($params['cart']->id_address_invoice);
-        $shippingAddress            = new Address($params['cart']->id_address_delivery);
-        $billingAddress->email      = $params['cookie']->email;
-        $shippingAddress->email     = $params['cookie']->email;
-        $apiKey                     = Configuration::get('iyzipay_api_key');
-        $secretKey                  = Configuration::get('iyzipay_secret_key');
-        $rand                       = rand(100000,99999999);
-        $errorMessage               = false;
-        $endpoint                   = Configuration::get('iyzipay_api_type');
+        $pkiString = IyzipayPkiStringBuilder::pkiStringGenerate($iyzico);
 
-        $iyzico                     = IyzipayCheckoutFormObject::option($params,$currency,$context,$apiKey);
-        $iyzico->buyer              = IyzipayCheckoutFormObject::buyer($billingAddress);
-        $iyzico->shippingAddress    = IyzipayCheckoutFormObject::shippingAddress($shippingAddress);
-        $iyzico->billingAddress     = IyzipayCheckoutFormObject::billingAddress($billingAddress);
-        $iyzico->basketItems        = IyzipayCheckoutFormObject::basketItems($basketItems,$shipping);
-        $iyzico                     = IyzipayCheckoutFormObject::CheckoutFormObjectSort($iyzico);
+        $authorization = IyzipayPkiStringBuilder::authorization($pkiString, $apiKey, $secretKey, $rand);
 
+        $iyzico = json_encode($iyzico, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        $pkiString                  = IyzipayPkiStringBuilder::pkiStringGenerate($iyzico);
+        $this->context->cookie->totalPrice = $params['cart']->getOrderTotal();
 
-        $authorization              = IyzipayPkiStringBuilder::authorization($pkiString,$apiKey,$secretKey,$rand);
-        
+        $requestResponse = IyzipayRequest::checkoutFormRequest($endpoint, $iyzico, $authorization);
 
-        $iyzico                     = json_encode($iyzico,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-
-
-        $this->context->cookie->totalPrice   =  $params['cart']->getOrderTotal();
-
-        $requestResponse            = IyzipayRequest::checkoutFormRequest($endpoint,$iyzico,$authorization);
-        
-
-        if(isset($requestResponse->status)) {
-
-            if($requestResponse->status != 'success') {
- 
+        if (isset($requestResponse->status)) {
+            if ($requestResponse->status != 'success') {
                 return $requestResponse->errorMessage;
             }
-
         } else {
-
             return 'Not Connection...';
         }
 
-        $this->context->cookie->iyziToken   = $requestResponse->token;
+        $this->context->cookie->iyziToken = $requestResponse->token;
 
         return $requestResponse;
-
     }
 
     /**
@@ -479,105 +447,124 @@ class Iyzipay extends PaymentModule
      */
     public function hookPaymentReturn($params)
     {
-    
-        if ($this->active == false)
+
+        if ($this->active == false) {
             return;
+        }
 
-        $order      = $params['order'];
-        $currency   = $this->context->currency;
+        $order = $params['order'];
 
-        if ($order->getCurrentOrderState()->id != Configuration::get('PS_OS_ERROR'))
+        if ($order->getCurrentOrderState()->id != Configuration::get('PS_OS_ERROR')) {
             $this->smarty->assign('status', 'ok');
+        }
 
         $this->smarty->assign(array(
             'id_order' => $order->id,
             'reference' => $order->reference,
             'params' => $params,
-            'total' => Tools::displayPrice($this->context->cookie->totalPrice,$this->context->currency, false),
-            'installmentFee' => Tools::displayPrice($this->context->cookie->installmentFee,$this->context->currency, false),
+            'total' => Tools::displayPrice($this->context->cookie->totalPrice, $this->context->currency, false),
+            'installmentFee' => Tools::displayPrice($this->context->cookie->installmentFee, $this->context->currency, false),
         ));
 
         return $this->display(__FILE__, 'views/templates/front/confirmation.tpl');
-
     }
 
-    private function getOptionText() {
+    /**
+     * @return mixed
+     */
+    private function getOptionText()
+    {
+        $title = Configuration::get('iyzipay_option_text');
+        $isoCode = $this->context->language->iso_code;
 
-        $title      = Configuration::get('iyzipay_option_text');
-        $isoCode    = $this->context->language->iso_code;
-
-        $title = $this->iyziMultipLangTitle($title,$isoCode);
+        $title = $this->iyziMultipLangTitle($title, $isoCode);
 
         return $title;
     }
 
-    private function paymentOptionResult() {
-
+    /**
+     * @return array
+     */
+    private function paymentOptionResult()
+    {
         $title = $this->getOptionText();
+        $newOptions = array();
 
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name)
-                ->setCallToActionText($this->trans($title, array(), 'Modules.Iyzipay'))
-                ->setAction($this->context->link->getModuleLink($this->name,'validation',array(),true))
-                ->setAdditionalInformation($this->fetch('module:iyzipay/views/templates/front/iyzico.tpl'));
+            ->setCallToActionText($this->trans($title, array(), 'Modules.Iyzipay'))
+            ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
+            ->setAdditionalInformation($this->fetch('module:iyzipay/views/templates/front/iyzico.tpl'));
 
-        return [$newOption];
+        $newOptions[] = $newOption;
+
+        return $newOptions;
     }
 
-    private function successAssign($iyzicoCheckoutFormResponse) {
-
-        $logo  = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/cards.png');
+    /**
+     * @param $iyzicoCheckoutFormResponse
+     * @return array
+     */
+    private function successAssign($iyzicoCheckoutFormResponse)
+    {
+        $logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/cards.png');
 
         $title = $this->getOptionText();
 
-        $this->context->smarty->assign('response',$iyzicoCheckoutFormResponse->checkoutFormContent);
-        $this->context->smarty->assign('form_class',Configuration::get('iyzipay_display'));
-        $this->context->smarty->assign('credit_card',$title);
-        $this->context->smarty->assign('contract_text',$this->l('Contract approval is required for the payment form to be active.'));
-        $this->context->smarty->assign('cards',$logo);
-        $this->context->smarty->assign('module_dir',__PS_BASE_URI__);
+        $this->context->smarty->assign('response', $iyzicoCheckoutFormResponse->checkoutFormContent);
+        $this->context->smarty->assign('form_class', Configuration::get('iyzipay_display'));
+        $this->context->smarty->assign('credit_card', $title);
+        $this->context->smarty->assign('contract_text', $this->l('Contract approval is required for the payment form to be active.'));
+        $this->context->smarty->assign('cards', $logo);
+        $this->context->smarty->assign('module_dir', __PS_BASE_URI__);
 
         return $this->paymentOptionResult();
-    
     }
 
-    private function errorAssign($errorMessage) {
-
-        $this->context->smarty->assign('error',$errorMessage);
+    /**
+     * @param $errorMessage
+     * @return array
+     */
+    private function errorAssign($errorMessage)
+    {
+        $this->context->smarty->assign('error', $errorMessage);
 
         return $this->paymentOptionResult();
-
     }
 
-    private function versionCheck() {
-
+    /**
+     * @return bool|string
+     */
+    private function versionCheck()
+    {
         $phpVersion = phpversion();
         $requiredVersion = 5.4;
 
-        if($phpVersion < $requiredVersion) {
+        if ($phpVersion < $requiredVersion) {
             return 'Required PHP '.$requiredVersion.' and greater for iyzico PrestaShop Payment Gateway';
         }
 
-        return false;   
-
+        return false;
     }
 
-    private function iyziMultipLangTitle($title,$isoCode) {
+    /**
+     * @param $title
+     * @param $isoCode
+     * @return mixed
+     */
+    private function iyziMultipLangTitle($title, $isoCode)
+    {
+        if ($title) {
+            $parser = explode('|', $title);
 
-        if($title) {
-
-            $parser = explode('|',$title);
-
-            if(is_array($parser) && count($parser)) {
-
-                foreach ($parser as $key => $parse) {
-                    $result = explode('=',$parse);
-                    if($isoCode == $result[0]) {
+            if (is_array($parser) && count($parser)) {
+                foreach ($parser as $parse) {
+                    $result = explode('=', $parse);
+                    if ($isoCode == $result[0]) {
                         $title = $result[1];
                         break;
                     }
                 }
-                
             }
         }
 
