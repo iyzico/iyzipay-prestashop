@@ -45,6 +45,7 @@ class IyzipayCheckoutFormObject
 
         $shipping = $params['cart']->getOrderTotal(true, Cart::ONLY_SHIPPING);
         $basketItems = $params['cart']->getProducts();
+        $httpProtocol = !Configuration::get('PS_SSL_ENABLED') ? 'http://' : 'https://';
 
         $iyzico = new stdClass();
         $iyzico->locale = $context->language->iso_code;
@@ -55,7 +56,7 @@ class IyzipayCheckoutFormObject
         $iyzico->basketId = $params['cookie']->id_cart;
         $iyzico->paymentGroup = 'PRODUCT';
         $iyzico->forceThreeDS = '0';
-        $iyzico->callbackUrl = Configuration::get('PS_SSL_ENABLED') ? 'https://' : 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'index.php?module_action=init&fc=module&module=iyzipay&controller=callback';
+        $iyzico->callbackUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'index.php?module_action=init&fc=module&module=iyzipay&controller=callback';
         $iyzico->cardUserKey = IyzipayModel::findUserCardKey($params['cookie']->id_customer, $apiKey);
         $iyzico->paymentSource = _PS_VERSION_.'|PIE|1.0';
 
