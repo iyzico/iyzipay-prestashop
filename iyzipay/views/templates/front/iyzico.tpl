@@ -31,13 +31,13 @@
         </div>
         {/if}
         <div id="loadingContainer">
-        	<div class="loading"></div>
+          <div class="loading"></div>
             <div class="brand">
               <p>iyzico</p>
             </div>
         </div>
         <div id="iyzipay-checkout-form" class="{$form_class}" style="display:none;">
-      		{$response nofilter}
+          {$response nofilter}
         </div>
         <div class="iyziCards" id="iyziCards">
           <img src="{{$cards}}" class="form-class" />
@@ -78,8 +78,8 @@ $( document ).ready(function() {
 
   if(contractCheck.length == 1) {
 
-    		$("input[name='payment-option']").click(function () {
-    		    $("button[class='btn btn-primary center-block']").show();
+        $("input[name='payment-option']").click(function () {
+            $("button[class='btn btn-primary center-block']").show();
 
             if ($("input[id='conditions_to_approve[terms-and-conditions]']").is(':checked')) {
 
@@ -95,9 +95,9 @@ $( document ).ready(function() {
             
             }
 
-    		});
+        });
 
-    		$("input[data-module-name='iyzipay']").click(function () {
+        $("input[data-module-name='iyzipay']").click(function () {
               
                 $("button[class='btn btn-primary center-block']").hide();
 
@@ -122,9 +122,19 @@ $( document ).ready(function() {
       });        
   } else {
 
-     $("#loadingContainer").hide();
-     $("#iyzipay-checkout-form").show();
-     $('#iyziCards').hide();
+        $("input[name='payment-option']").click(function () {
+            $("button[class='btn btn-primary center-block']").show();
+        });
+
+        $("input[data-module-name='iyzipay']").click(function () {
+              
+          $("button[class='btn btn-primary center-block']").hide();
+
+          $("#loadingContainer").hide();
+          $('#iyziCards').hide();
+          $("#iyzipay-checkout-form").show();
+
+        });        
   }
 
   $(".material-icons").click(function(){
