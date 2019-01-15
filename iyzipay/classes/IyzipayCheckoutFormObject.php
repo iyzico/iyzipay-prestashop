@@ -58,7 +58,7 @@ class IyzipayCheckoutFormObject
         $iyzico->forceThreeDS = '0';
         $iyzico->callbackUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'index.php?module_action=init&fc=module&module=iyzipay&controller=callback';
         $iyzico->cardUserKey = IyzipayModel::findUserCardKey($params['cookie']->id_customer, $apiKey);
-        $iyzico->paymentSource = _PS_VERSION_.'|PIE|1.0';
+        $iyzico->paymentSource = _PS_VERSION_.'|PRESTASHOP|PIE|1.0.1';
 
         return $iyzico;
     }

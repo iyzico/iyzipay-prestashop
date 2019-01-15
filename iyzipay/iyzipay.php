@@ -44,7 +44,7 @@ class Iyzipay extends PaymentModule
     {
         $this->name = 'iyzipay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -373,6 +373,10 @@ class Iyzipay extends PaymentModule
 
     public function hookPaymentOptions($params)
     {
+
+        if(!$params['cart']->id_carrier)
+            return $this->paymentOptionResult();
+
         $iyzicoCheckoutFormResponse = $this->checkoutFormGenerate($params);
 
         $phpCheckVersion = $this->versionCheck();
