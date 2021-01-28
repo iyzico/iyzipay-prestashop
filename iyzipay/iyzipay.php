@@ -1,28 +1,28 @@
 <?php
 /**
- * 2007-2018 PrestaShop
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the Academic Free License (AFL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to http://www.prestashop.com for more information.
- *
- *  @author    iyzico <info@iyzico.com>
- *  @copyright 2018 iyzico
- *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- *  International Registered Trademark & Property of iyzico
- */
+* 2007-2018 PrestaShop
+*
+* NOTICE OF LICENSE
+*
+* This source file is subject to the Academic Free License (AFL 3.0)
+* that is bundled with this package in the file LICENSE.txt.
+* It is also available through the world-wide-web at this URL:
+* http://opensource.org/licenses/afl-3.0.php
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to license@prestashop.com so we can send you a copy immediately.
+*
+* DISCLAIMER
+*
+* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+* versions in the future. If you wish to customize PrestaShop for your
+* needs please refer to http://www.prestashop.com for more information.
+*
+*  @author    iyzico <info@iyzico.com>
+*  @copyright 2018 iyzico
+*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+*  International Registered Trademark & Property of iyzico
+*/
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -80,11 +80,10 @@ class Iyzipay extends PaymentModule
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
 
         $this->extra_mail_vars = array(
-            '{instalmentFee}' => '',
-        );
+             '{instalmentFee}' => '',
+            );
 
         $this->checkAndSetCookieSameSite();
-
     }
 
     /**
@@ -121,19 +120,19 @@ class Iyzipay extends PaymentModule
 
         include(dirname(__FILE__).'/sql/uninstall.php');
 
-        return $this->unregisterHook('footer')
-            && $this->unregisterHook('backOfficeHeader')
-            && $this->unregisterHook('PaymentOptions')
-            && $this->unregisterHook('paymentReturn')
-            && Configuration::deleteByName('iyzipay_api_type')
-            && Configuration::deleteByName('iyzipay_api_key')
-            && Configuration::deleteByName('iyzipay_secret_key')
-            && Configuration::deleteByName('iyzipay_module_status')
-            && Configuration::deleteByName('iyzipay_option_text')
-            && Configuration::deleteByName('iyzipay_display')
-            && Configuration::deleteByName('iyzipay_overlay_position')
-            && Configuration::deleteByName('iyzipay_overlay_token')
-            && parent::uninstall();
+            return $this->unregisterHook('footer')
+        && $this->unregisterHook('backOfficeHeader')
+        && $this->unregisterHook('PaymentOptions')
+        && $this->unregisterHook('paymentReturn')
+        && Configuration::deleteByName('iyzipay_api_type')
+        && Configuration::deleteByName('iyzipay_api_key')
+        && Configuration::deleteByName('iyzipay_secret_key')
+        && Configuration::deleteByName('iyzipay_module_status')
+        && Configuration::deleteByName('iyzipay_option_text')
+        && Configuration::deleteByName('iyzipay_display')
+        && Configuration::deleteByName('iyzipay_overlay_position')
+        && Configuration::deleteByName('iyzipay_overlay_token')
+        && parent::uninstall();
     }
 
     /**
@@ -343,8 +342,8 @@ class Iyzipay extends PaymentModule
     }
 
     /**
-     * Add the CSS & JavaScript files you want to be loaded in the BO.
-     */
+    * Add the CSS & JavaScript files you want to be loaded in the BO.
+    */
     public function hookBackOfficeHeader()
     {
 
@@ -401,7 +400,6 @@ class Iyzipay extends PaymentModule
      */
     public function checkoutFormGenerate($params)
     {
-
         $this->context->cookie->totalPrice = false;
         $this->context->cookie->installmentFee = false;
         $this->context->cookie->iyziToken = false;
@@ -477,10 +475,6 @@ class Iyzipay extends PaymentModule
         return $this->display(__FILE__, 'views/templates/front/confirmation.tpl');
     }
 
-    /**
-     * @return mixed
-     */
-
     private function setcookieSameSite($name, $value, $expire, $path, $domain, $secure, $httponly) {
 
         if (PHP_VERSION_ID < 70300) {
@@ -514,7 +508,9 @@ class Iyzipay extends PaymentModule
         }
     }
 
-
+    /**
+     * @return mixed
+     */
     private function getOptionText()
     {
         $title = Configuration::get('iyzipay_option_text');
