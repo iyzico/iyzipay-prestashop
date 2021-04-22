@@ -43,7 +43,7 @@ class Paywithiyzico extends PaymentModule
     {
         $this->name = 'paywithiyzico';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = '1.0.1';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -66,7 +66,7 @@ class Paywithiyzico extends PaymentModule
         $this->InstallmentKey           = $this->l('InstallmentKey');
         $this->installmentShopping      = $this->l('installmentShopping');
         $this->installmentOption        = $this->l('installmentOption');
-        $this->commissionAmount           = $this->l('commissionAmount');
+        $this->commissionAmount         = $this->l('commissionAmount');
 
 
         
@@ -130,6 +130,8 @@ class Paywithiyzico extends PaymentModule
         }
 
         $this->context->smarty->assign('module_dir', $this->_path);
+
+        $this->context->smarty->assign('payWithIyzicoVersion', $this->version);
 
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
 
@@ -377,11 +379,32 @@ class Paywithiyzico extends PaymentModule
      */
     private function paymentOptionResult()
     {
-        $title = $this->getOptionText();
-        $newOptions = array();
+       $newOptions = array();
+
+        $languageId = $this->context->cookie->id_lang;
+        $languages = Language::getLanguage($languageId);
+        $languageIsoCode = $languages['iso_code'];
+
+        $pwi_logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name."/views/img/pay_with_iyzico.png");
+        $title = "Alışverişlerini hızla ve kolayca iyzico ile Öde!";
+        $this->context->smarty->assign('pwi_description_first', "iyzico ile Öde-Şimdi Kolay!");
+        $this->context->smarty->assign('pwi_description_second', "Alışverişini ister iyzico bakiyenle, ister saklı kartınla,
+                ister havale/EFT yöntemi ile kolayca öde; aklına takılan herhangi bir konuda iyzico Korumalı Alışveriş avantajıyla
+                7/24 canlı destek al.");
+
+
+        if ($languageIsoCode != 'tr'){
+            $pwi_logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name."/views/img/pay_with_iyzico_en.png");
+            $title = "Pay with iyzico-It’s Easy Now!";
+            $this->context->smarty->assign('pwi_description_first', "");
+            $this->context->smarty->assign('pwi_description_second', "You can easily pay for your shopping
+                        with your iyzico balance, with your stored card or money transfer method;
+                        get 24/7 live support with the advantage of iyzico Buyer Protection on any matter.");
+        }
 
         $newOption = new PaymentOption();
-        $newOption->setModuleName($this->name)
+        $newOption->setLogo($pwi_logo)
+            ->setModuleName($this->name)
             ->setCallToActionText($this->trans($title, array(), 'Modules.Paywithiyzico'))
             ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
             ->setAdditionalInformation($this->fetch('module:paywithiyzico/views/templates/front/paywithiyzico.tpl'));
@@ -398,10 +421,7 @@ class Paywithiyzico extends PaymentModule
     private function successAssign($paywithiyzicoResponse)
     {
 
-        $logo_pwi = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/cards.png');
-        
         $this->context->smarty->assign('pwi', $paywithiyzicoResponse->payWithIyzicoPageUrl);
-        $this->context->smarty->assign('cards_pwi', $logo_pwi);
 
         return $this->paymentOptionResult();
 

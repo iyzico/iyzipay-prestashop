@@ -28,6 +28,7 @@ require_once _PS_MODULE_DIR_.'iyzipay/classes/IyzipayModel.php';
 require_once _PS_MODULE_DIR_.'paywithiyzico/classes/PaywithiyzicoObject.php';
 require_once _PS_MODULE_DIR_.'paywithiyzico/classes/PaywithiyzicoPkiStringBuilder.php';
 require_once _PS_MODULE_DIR_.'paywithiyzico/classes/PaywithiyzicoRequest.php';
+require_once _PS_MODULE_DIR_.'paywithiyzico/classes/PaywithiyzicoModel.php';
 
 class PaywithiyzicoCallBackModuleFrontController extends ModuleFrontController
 {
@@ -85,6 +86,13 @@ class PaywithiyzicoCallBackModuleFrontController extends ModuleFrontController
             $requestResponse->paidPrice       = (float) $requestResponse->paidPrice;
             $requestResponse->paymentId       = (int)   $requestResponse->paymentId;
             $requestResponse->conversationId  = (int)   $requestResponse->conversationId;
+
+            if($requestResponse->paymentStatus == 'INIT_BANK_TRANSFER' && $requestResponse->status == 'success') {
+                $orderMessage = 'iyzico Banka havalesi/EFT ödemesi bekleniyor.';
+                $this->module->validateOrder($orderId, Configuration::get('PS_OS_BANKWIRE'), $cartTotal, $this->module->displayName, $orderMessage, $extraVars, NULL, false, $customerSecureKey);
+
+                Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+            }
 
             if (empty($orderId)) {
                 if ($token) {
@@ -151,7 +159,7 @@ class PaywithiyzicoCallBackModuleFrontController extends ModuleFrontController
                 $extraVars['{date}']                  = Tools::displayDate(date('Y-m-d H:i:s'), null, 1).$installmentMessageEmail;
 
                 /* Invoice false */
-                Configuration::updateValue('PS_INVOICE', false);
+                //Configuration::updateValue('PS_INVOICE', false);
             }
 
             $test = $this->module->validateOrder($orderId, Configuration::get('PS_OS_PAYMENT'), $cartTotal, $this->module->displayName, $installmentMessage, $extraVars, $currenyId, false, $customerSecureKey);
@@ -167,6 +175,8 @@ class PaywithiyzicoCallBackModuleFrontController extends ModuleFrontController
                 IyzipayModel::updateOrderTotal($requestResponse->paidPrice, $currentOrderId);
 
                 IyzipayModel::updateOrderPayment($requestResponse->paidPrice, $order->reference);
+
+                PaywithiyzicoModel::updateOrderInvoiceTotal($requestResponse->paidPrice, $currentOrderId);
 
                 /* Open Thread */
                 $customer_thread = new CustomerThread();
