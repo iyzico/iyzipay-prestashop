@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
     <name>paywithiyzico</name>
-    <displayName><![CDATA[paywithiyzico &Ouml;deme Mod&uuml;l&uuml;]]></displayName>
+    <displayName><![CDATA[paywithiyzico]]></displayName>
     <version><![CDATA[1.0.1]]></version>
-    <description><![CDATA[PrestaShop i&ccedil;in paywithiyzico &Ouml;deme Ge&ccedil;idi]]></description>
+    <description><![CDATA[Pay with iyzico Payment Gateway for PrestaShop]]></description>
     <author><![CDATA[paywithiyzico]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[emin misiniz ?]]></confirmUninstall>

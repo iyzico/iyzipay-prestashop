@@ -30,6 +30,16 @@
             <p class="alert alert-warning">{$error}</p>
         </div>
         {/if}
+        <div>
+            <p>{$pwi_description_first}<br>
+                {$pwi_description_second}</p>
+        </div>
+        <div id="loadingContainer">
+            <div class="loading"></div>
+            <div class="brand">
+                <p>iyzico</p>
+            </div>
+        </div>
         <div id="paywithiyzico-checkout-form" class="{$form_class}" style="display:none;">
           {$pwi nofilter}
           <script type="text/javascript">
@@ -39,9 +49,7 @@
           </script>
         </div>
         <div class="iyziCards" id="iyziCards">
-          <img src="{{$cards_pwi}}" class="form-class" />
         <p id="termsError">{$contract_text}</p>
-        
         </div>
     </div>
 </div>
@@ -62,12 +70,20 @@
   text-align: center;
 }
 
+img[src*="paywithiyzico"] {
+    width: 20%;
+}
+
 .iyziCards p {
   text-align:center;
   font-weight: bold;
 }
 
-.loading{width:40px;height:40px;background-color:#4ec8f1;margin:100px auto;-webkit-animation:sk-rotateplane 1.2s infinite ease-in-out;animation:sk-rotateplane 1.2s infinite ease-in-out}@-webkit-keyframes sk-rotateplane{0%{-webkit-transform:perspective(120px)}50%{-webkit-transform:perspective(120px) rotateY(180deg)}100%{-webkit-transform:perspective(120px) rotateY(180deg) rotateX(180deg)}}@keyframes sk-rotateplane{0%{transform:perspective(120px) rotateX(0) rotateY(0);-webkit-transform:perspective(120px) rotateX(0) rotateY(0)}50%{transform:perspective(120px) rotateX(-180.1deg) rotateY(0);-webkit-transform:perspective(120px) rotateX(-180.1deg) rotateY(0)}100%{transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg);-webkit-transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg)}}.brand{margin:auto}.brand p{color:#16a2c5;text-align:center;margin-top:-100px}
+#checkout-payment-step label {
+    text-align: left;
+}
+
+.loading{width:40px;height:40px;background-color:#1E64FF;margin:100px auto;-webkit-animation:sk-rotateplane 1.2s infinite ease-in-out;animation:sk-rotateplane 1.2s infinite ease-in-out}@-webkit-keyframes sk-rotateplane{0%{-webkit-transform:perspective(120px)}50%{-webkit-transform:perspective(120px) rotateY(180deg)}100%{-webkit-transform:perspective(120px) rotateY(180deg) rotateX(180deg)}}@keyframes sk-rotateplane{0%{transform:perspective(120px) rotateX(0) rotateY(0);-webkit-transform:perspective(120px) rotateX(0) rotateY(0)}50%{transform:perspective(120px) rotateX(-180.1deg) rotateY(0);-webkit-transform:perspective(120px) rotateX(-180.1deg) rotateY(0)}100%{transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg);-webkit-transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg)}}.brand{margin:auto}.brand p{color:#1E64FF;text-align:center;margin-top:-100px}
 </style>
 <script>
 
