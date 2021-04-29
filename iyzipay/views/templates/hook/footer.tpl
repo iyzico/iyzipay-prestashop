@@ -24,6 +24,17 @@
 *}
 
 {if ($position != 'hidden') || ($position != '') }
-<script> window.iyz = { token:'{$token}', position:'{$position}',ideaSoft: false};</script>
+    <style>
+        @media screen and (max-width: 380px) {
+            ._1xrVL7npYN5CKybp32heXk {
+                position: fixed;
+                bottom: 0!important;
+                top: unset;
+                left: 0;
+                width: 100%;
+            }
+        }
+    </style>
+<script> window.iyz = { token:'{$token}', position:'{$position}',ideaSoft: false,pwi:true};</script>
 <script src='https://static.iyzipay.com/buyer-protection/buyer-protection.js' type='text/javascript'></script>
 {/if}

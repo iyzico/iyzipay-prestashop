@@ -86,6 +86,8 @@ class IyzipayRequest
      */
     public static function curlPost($json, $authorization, $endpoint)
     {
+        $phpVersion = phpversion();
+
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $endpoint);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -97,6 +99,7 @@ class IyzipayRequest
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                 "Authorization:".$authorization['authorization'],
                 "x-iyzi-rnd:".$authorization['randValue'],
+                "presta-php-version:".$phpVersion,
                 "Content-Type: application/json",
         ));
         $result = json_decode(curl_exec($curl));

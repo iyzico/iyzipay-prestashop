@@ -122,4 +122,23 @@ class IyzipayModel extends ObjectModel
 
         return Db::getInstance()->execute($sql);
     }
+
+    /**
+     * @param $price
+     * @param $order_id
+     * @return mixed
+     */
+    public static function updateOrderInvoiceTotal($price, $order_id)
+    {
+
+        $tableName = 'order_invoice';
+        $order_id  = (int) $order_id;
+
+        $sql = 'UPDATE '._DB_PREFIX_.bqSQL($tableName).'
+		    SET `total_paid_tax_incl` = \''.$price.'\',
+		     	`total_products_wt` = \''.$price.'\'
+		    WHERE `id_order` = \''.$order_id.'\'';
+
+        return Db::getInstance()->execute($sql);
+    }
 }
