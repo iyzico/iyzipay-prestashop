@@ -1,28 +1,28 @@
 <?php
 /**
-* 2007-2018 PrestaShop
-*
-* NOTICE OF LICENSE
-*
-* This source file is subject to the Academic Free License (AFL 3.0)
-* that is bundled with this package in the file LICENSE.txt.
-* It is also available through the world-wide-web at this URL:
-* http://opensource.org/licenses/afl-3.0.php
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to license@prestashop.com so we can send you a copy immediately.
-*
-* DISCLAIMER
-*
-* Do not edit or add to this file if you wish to upgrade PrestaShop to newer
-* versions in the future. If you wish to customize PrestaShop for your
-* needs please refer to http://www.prestashop.com for more information.
-*
-*  @author    iyzico <info@iyzico.com>
-*  @copyright 2018 iyzico
-*  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  International Registered Trademark & Property of iyzico
-*/
+ * 2007-2018 PrestaShop
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ * versions in the future. If you wish to customize PrestaShop for your
+ * needs please refer to http://www.prestashop.com for more information.
+ *
+ *  @author    iyzico <info@iyzico.com>
+ *  @copyright 2018 iyzico
+ *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ *  International Registered Trademark & Property of iyzico
+ */
 
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 
@@ -44,7 +44,7 @@ class Iyzipay extends PaymentModule
     {
         $this->name = 'iyzipay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.1';
+        $this->version = '1.1.0';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -80,8 +80,8 @@ class Iyzipay extends PaymentModule
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
 
         $this->extra_mail_vars = array(
-             '{instalmentFee}' => '',
-            );
+            '{instalmentFee}' => '',
+        );
 
         $this->checkAndSetCookieSameSite();
     }
@@ -104,6 +104,8 @@ class Iyzipay extends PaymentModule
             return false;
         }
 
+        $this->setIyziWebhookUrlKey();
+
         //Configuration::updateValue('IYZIPAY_LIVE_MODE', false);
 
         include(dirname(__FILE__).'/sql/install.php');
@@ -112,7 +114,24 @@ class Iyzipay extends PaymentModule
             $this->registerHook('footer') &&
             $this->registerHook('backOfficeHeader') &&
             $this->registerHook('PaymentOptions') &&
-            $this->registerHook('paymentReturn');
+            $this->registerHook('paymentReturn') &&
+            $this->registerHook('ModuleRoutes');
+    }
+
+    public function hookModuleRoutes()
+    {
+
+        return [
+            'module-iyzipay-webhook' => [
+                'rule' => 'iyzico/api/webhook/'. $this->getIyziWebhookUrlKey(),
+                'controller' => 'webhook',
+                'keywords' => [],
+                'params' => [
+                    'fc' => 'module',
+                    'module' => 'iyzipay'
+                ]
+            ]
+        ];
     }
 
     public function uninstall()
@@ -120,19 +139,19 @@ class Iyzipay extends PaymentModule
 
         include(dirname(__FILE__).'/sql/uninstall.php');
 
-            return $this->unregisterHook('footer')
-        && $this->unregisterHook('backOfficeHeader')
-        && $this->unregisterHook('PaymentOptions')
-        && $this->unregisterHook('paymentReturn')
-        && Configuration::deleteByName('iyzipay_api_type')
-        && Configuration::deleteByName('iyzipay_api_key')
-        && Configuration::deleteByName('iyzipay_secret_key')
-        && Configuration::deleteByName('iyzipay_module_status')
-        && Configuration::deleteByName('iyzipay_option_text')
-        && Configuration::deleteByName('iyzipay_display')
-        && Configuration::deleteByName('iyzipay_overlay_position')
-        && Configuration::deleteByName('iyzipay_overlay_token')
-        && parent::uninstall();
+        return $this->unregisterHook('footer')
+            && $this->unregisterHook('backOfficeHeader')
+            && $this->unregisterHook('PaymentOptions')
+            && $this->unregisterHook('paymentReturn')
+            && Configuration::deleteByName('iyzipay_api_type')
+            && Configuration::deleteByName('iyzipay_api_key')
+            && Configuration::deleteByName('iyzipay_secret_key')
+            && Configuration::deleteByName('iyzipay_module_status')
+            && Configuration::deleteByName('iyzipay_option_text')
+            && Configuration::deleteByName('iyzipay_display')
+            && Configuration::deleteByName('iyzipay_overlay_position')
+            && Configuration::deleteByName('iyzipay_overlay_token')
+            && parent::uninstall();
     }
 
     /**
@@ -149,11 +168,18 @@ class Iyzipay extends PaymentModule
 
         $this->context->smarty->assign('module_dir', $this->_path);
 
+        $this->context->smarty->assign('webhookUrlKey', $this->getIyziWebhookUrlKey());
+
+        $this->context->smarty->assign('websiteBaseUrl',Tools::getHttpHost(true) . __PS_BASE_URI__);
+
+        $this->context->smarty->assign('iyziVersion', $this->version);
+
+        $this->context->smarty->assign('languageIsoCode', $this->context->language->iso_code);
+
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
 
         /* Set iyziTitle */
         $this->setIyziTitle();
-
 
         return $output.$this->renderForm();
     }
@@ -267,6 +293,10 @@ class Iyzipay extends PaymentModule
                         'type' => 'hidden',
                         'name' => 'iyzipay_overlay_token',
                     ),
+                    array(
+                        'type' => 'hidden',
+                        'name' => 'iyzipay_webhook_url_key',
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->l('Save'),
@@ -285,6 +315,7 @@ class Iyzipay extends PaymentModule
             'iyzipay_api_type' => Configuration::get('iyzipay_api_type', true),
             'iyzipay_api_key' => Configuration::get('iyzipay_api_key', true),
             'iyzipay_secret_key' => Configuration::get('iyzipay_secret_key', true),
+            'iyzipay_webhook_url_key' => Configuration::get('iyzipay_webhook_url_key', true),
             'iyzipay_module_status' => Configuration::get('iyzipay_module_status', true),
             'iyzipay_option_text' => Configuration::get('iyzipay_option_text', true),
             'iyzipay_display' => Configuration::get('iyzipay_display', true),
@@ -335,15 +366,42 @@ class Iyzipay extends PaymentModule
         $title = Configuration::get('iyzipay_option_text');
 
         if (!$title) {
-            Configuration::updateValue('iyzipay_option_text', 'tr=Kredi ve Banka Kartı ile Ödeme - iyzico|en=Credit and Debit Card iyzico|fr=Credit and Debit Card iyzico');
+            Configuration::updateValue('iyzipay_option_text', 'tr=Kredi ve Banka Kartı ile Ödeme |en=Credit and Debit Card |fr=Credit and Debit Card');
         }
 
         return true;
     }
 
     /**
-    * Add the CSS & JavaScript files you want to be loaded in the BO.
-    */
+     * @return bool
+     */
+    private function setIyziWebhookUrlKey()
+    {
+        $webhookUrl = Configuration::get('iyzipay_webhook_url_key');
+
+        $uniqueUrlId = substr(base64_encode(time() . mt_rand()),15,6);
+
+        if (!$webhookUrl) {
+            Configuration::updateValue('iyzipay_webhook_url_key', $uniqueUrlId);
+        }
+
+        return true;
+    }
+
+    public function getIyziWebhookUrlKey(){
+        if (!Configuration::get('iyzipay_webhook_url_key')){
+            $output = null;
+            $output .= $this->displayError('Webhook URL üretilemedi!');
+            return $output;
+        }
+        else{
+            return Configuration::get('iyzipay_webhook_url_key');
+        }
+    }
+
+    /**
+     * Add the CSS & JavaScript files you want to be loaded in the BO.
+     */
     public function hookBackOfficeHeader()
     {
 
@@ -418,7 +476,7 @@ class Iyzipay extends PaymentModule
         $rand = rand(100000, 99999999);
         $endpoint = Configuration::get('iyzipay_api_type');
 
-        $iyzico = IyzipayCheckoutFormObject::option($params, $currency, $context, $apiKey);
+        $iyzico = IyzipayCheckoutFormObject::option($params, $currency, $context, $apiKey, $this->version);
         $iyzico->buyer = IyzipayCheckoutFormObject::buyer($billingAddress);
         $iyzico->shippingAddress = IyzipayCheckoutFormObject::shippingAddress($shippingAddress);
         $iyzico->billingAddress = IyzipayCheckoutFormObject::billingAddress($billingAddress);
@@ -529,8 +587,11 @@ class Iyzipay extends PaymentModule
         $title = $this->getOptionText();
         $newOptions = array();
 
+        $cards_logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name."/views/img/cards.png");
+
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name)
+            ->setLogo($cards_logo)
             ->setCallToActionText($this->trans($title, array(), 'Modules.Iyzipay'))
             ->setAction($this->context->link->getModuleLink($this->name, 'validation', array(), true))
             ->setAdditionalInformation($this->fetch('module:iyzipay/views/templates/front/iyzico.tpl'));
@@ -540,7 +601,7 @@ class Iyzipay extends PaymentModule
         return $newOptions;
     }
 
-    /**
+    /**x
      * @param $iyzicoCheckoutFormResponse
      * @return array
      */
@@ -609,4 +670,5 @@ class Iyzipay extends PaymentModule
 
         return $title;
     }
+
 }

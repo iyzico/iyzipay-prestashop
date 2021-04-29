@@ -40,12 +40,13 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
         $this->context              = Context::getContext();
     }
 
-    public function init()
+    public function init($webhook = null, $webhookPaymentConversationId = null ,$webhookToken = null)
     {
         parent::init();
 
         try {
-            if (!Tools::getValue('token')) {
+
+            if (!Tools::getValue('token') && $webhook != "webhook") {
                 $errorMessage = $this->l('tokenNotFound');
                 throw new \Exception("Token not found");
             }
@@ -67,6 +68,11 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
             $iyziTotalPrice                 = (float) $this->context->cookie->totalPrice;
             $token                          = Tools::getValue('token');
 
+            if ($webhook == 'webhook'){
+                $token = $webhookToken;
+                $orderId =  $webhookPaymentConversationId;
+            }
+
             $extraVars = array();
             $installmentMessage = false;
 
@@ -81,6 +87,38 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
             $responseObject  = json_encode($responseObject, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
             $requestResponse = IyzipayRequest::checkoutFormRequestDetail($endpoint, $responseObject, $authorization);
 
+            if ($webhook == "webhook" && $requestResponse->status == 'failure'){
+                return IyzipayWebhookModuleFrontController::webhookHttpResponse("errorCode: ".$requestResponse->errorCode ." - " . $requestResponse->errorMessage, 404);
+            }
+
+            if ($webhook == "webhook"){
+                $orderId = $requestResponse->basketId;
+                $cartId = $requestResponse->basketId;
+                $cart = new Cart($cartId);
+                $cartTotal = (float) $cart->getOrderTotal(true, Cart::BOTH);
+                $customer = new Customer($cart->id_customer);
+                $customerSecureKey = $customer->secure_key;
+
+                $order = Order::getByCartId($cart->id);
+
+                if ($order && $order->getCurrentState() == (int)Configuration::get('PS_OS_PAYMENT')){
+                    return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Exist - Sipariş zaten var.", 200);
+                }
+
+                if ($order && $order->getCurrentState() != (int)Configuration::get('PS_OS_PAYMENT')){
+                    $order->setCurrentState((int)Configuration::get('PS_OS_PAYMENT'));
+                    return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Status Updated - Sipariş Durumu Ödendi yapıldı.", 200);
+                }
+            }
+
+            if($requestResponse->paymentStatus == 'INIT_BANK_TRANSFER' && $requestResponse->status == 'success') {
+                $orderMessage = 'iyzico Banka havalesi/EFT ödemesi bekleniyor.';
+                $this->module->validateOrder($orderId, Configuration::get('PS_OS_BANKWIRE'), $cartTotal, $this->module->displayName, $orderMessage, $extraVars, NULL, false, $customerSecureKey);
+
+                Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+            }
+
+
             $requestResponse->installment     = (int)   $requestResponse->installment;
             $requestResponse->paidPrice       = (float) $requestResponse->paidPrice;
             $requestResponse->paymentId       = (int)   $requestResponse->paymentId;
@@ -89,15 +127,14 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
             if (empty($orderId)) {
                 if ($token) {
                     $this->cancelPayment($locale, $requestResponse->paymentId, $remoteIpAddr, $apiKey, $secretKey, $rand, $endpoint);
-                } else {
+                } else  {
                     $errorMessage = $this->l('orderNotFound');
                     throw new \Exception($errorMessage);
                 }
             }
 
-
-            if ($requestResponse->paymentStatus == 'SUCCESS') {
-                if ($this->context->cookie->iyziToken == $token) {
+            if ($requestResponse->paymentStatus == 'SUCCESS' && $webhook != "webhook") {
+                if ($this->context->cookie->iyziToken == $token)  {
                     $iyziTotalPriceFraud  = $iyziTotalPrice;
 
                     if (isset($requestResponse->installment) && !empty($requestResponse->installment) && $requestResponse->installment > 1) {
@@ -123,6 +160,8 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
 
             IyzipayModel::insertIyzicoOrder($iyzicoLocalOrder);
 
+
+
             if ($requestResponse->paymentStatus != 'SUCCESS' || $requestResponse->status != 'success' || $orderId != $requestResponse->basketId) {
                 if ($requestResponse->status == 'success' && $requestResponse->paymentStatus == 'FAILURE') {
                     $errorMessage = $this->l('error3D');
@@ -146,28 +185,34 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
                 }
             }
 
+
             if (isset($requestResponse->installment) && !empty($requestResponse->installment) && $requestResponse->installment > 1) {
                 /* Installment Calc and DB Update */
 
-                $installmentFee                         = $requestResponse->paidPrice - $iyziTotalPrice;
+                $cartId = $requestResponse->basketId;
+                $cart = new Cart($cartId);
+                $cartTotal = (float) $cart->getOrderTotal(true, Cart::BOTH);
+
+                $installmentFee                         = $requestResponse->paidPrice - $cartTotal;
                 $this->context->cookie->installmentFee  = $installmentFee;
 
                 $installmentMessage = '<br><br><strong style="color:#000;">Taksitli Alışveriş: </strong>Toplam ödeme tutarınıza <strong style="color:#000">'.$requestResponse->installment.' Taksit </strong> için <strong style="color:red">'.Tools::displayPrice($installmentFee, $currency, false).'</strong> yansıtılmıştır.<br>';
 
                 $installmentMessageEmail = '<br><br><strong style="color:#000;">'.$this->l('installmentShopping').'</strong><br> '.$this->l('installmentOption').'<strong style="color:#000"> '.$requestResponse->installment.' '.$this->l('InstallmentKey').'<br></strong>'.$this->l('commissionAmount').'<strong style="color:red">
-             '.Tools::displayPrice($installmentFee, $currency, false).'</strong><br>';
+                '.Tools::displayPrice($installmentFee, $currency, false).'</strong><br>';
 
                 $extraVars['{total_paid}']            = Tools::displayPrice($requestResponse->paidPrice, $currency, false);
                 $extraVars['{date}']                  = Tools::displayDate(date('Y-m-d H:i:s'), null, 1).$installmentMessageEmail;
 
                 /* Invoice false */
-                Configuration::updateValue('PS_INVOICE', false);
+                //Configuration::updateValue('PS_INVOICE', false);
             }
 
+                $this->module->validateOrder($orderId, Configuration::get('PS_OS_PAYMENT'), $cartTotal, $this->module->displayName, $installmentMessage, $extraVars, NULL, false, $customerSecureKey);
 
-            $this->module->validateOrder($orderId, Configuration::get('PS_OS_PAYMENT'), $cartTotal, $this->module->displayName, $installmentMessage, $extraVars, $currenyId, false, $customerSecureKey);
             if (isset($requestResponse->installment) && !empty($requestResponse->installment) && $requestResponse->installment > 1) {
                 /* Invoice true */
+
                 Configuration::updateValue('PS_INVOICE', $orderId);
 
                 $currentOrderId = (int) $this->module->currentOrder;
@@ -177,6 +222,8 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
                 IyzipayModel::updateOrderTotal($requestResponse->paidPrice, $currentOrderId);
 
                 IyzipayModel::updateOrderPayment($requestResponse->paidPrice, $order->reference);
+
+                IyzipayModel::updateOrderInvoiceTotal($requestResponse->paidPrice, $currentOrderId);
 
                 /* Open Thread */
                 $customer_thread = new CustomerThread();
@@ -197,6 +244,10 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
                 $customer_message->message             = $installmentMessage;
                 $customer_message->private             = 0;
                 $customer_message->add();
+            }
+
+            if ($webhook == 'webhook'){
+                return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Created by Webhook - Sipariş webhook tarafından oluşturuldu.", 200);
             }
 
             Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
