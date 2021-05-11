@@ -73,7 +73,7 @@ class Iyzipay extends PaymentModule
         
         $this->confirmUninstall = $this->l('are you sure ?');
 
-        $this->limited_countries = array('TR','FR','EN');
+        $this->limited_countries = array('US','CN','AU','JP','TH','IN','MY','KR','SG','HK','TW','KH','PH','VN','NO','ES','FR','NL','CZ','GB','DE','AT','CH','BR','IT','GR','PL','BE','IE','DK','PT','SE','GH','TR','RU','CM','ZA','FI','AE','JO','RO','LU','AR','UG','AM','TZ','BI','UY','CL','BG','UA','EG','CA','IL','QA','MD','HR','IQ','LT','LV','EE','UZ','SK','KZ','GE','AL','PS','HU','SA','CY','MT','CR','IR','BH','MX','CO','SY','LB','AZ','ZW','ZM','OM','RS','IS','SI','MK','LI','JE','SC','BA','KG','TJ','IM','GG','GI','LY','YE','BY','YT','RE','GP','MQ','KW','LK','SZ','CD','PK','BT','BN','PM','PA','LA','GU','MP','DO','ID','VI','NG','PE','EC','VE','PR','BO','NZ','BD','PG','TL','SB','VU','FJ','CK','TO','NP','KE','MO','TT','LS','VG','KN','AG','JM','VC','KY','LC','GD','CW','BB','BS','PY','GT','UM','DM','TM','TK','MV','AF','NC','MN','WF','DZ','SM','ME','MM','AD','MC','GL','BZ','FO','MF','LR','BW','TN','MG','AO','NA','CI','SD','MU','MW','GA','ML','BJ','TD','CV','RW','CG','MZ','GM','MA','GN','BF','SO','SL','NE','CF','TG','SS','GQ','SN','AS','MR','DJ','KM','IO','NR','WS','FM','PF','HN','SV','NI','GF','NU','TV','PW','MH','KI','KP','AW','CU','HT','SR','GY','VA','ST','ET','ER','GW','FK','BM','BL','AI','TC','SX','AX','NF','BQ','PN','AQ','SH','MS','GS');
 
         $this->limited_currencies = array('TRY','EUR','USD');
 
@@ -82,6 +82,7 @@ class Iyzipay extends PaymentModule
         $this->extra_mail_vars = array(
              '{instalmentFee}' => '',
             );
+        $this->checkAndSetCookieSameSite();
     }
 
     /**
@@ -374,7 +375,7 @@ class Iyzipay extends PaymentModule
     public function hookPaymentOptions($params)
     {
 
-        if(!$params['cart']->id_carrier)
+        if(!$params['cart']->id_address_invoice)
             return $this->paymentOptionResult();
 
         $iyzicoCheckoutFormResponse = $this->checkoutFormGenerate($params);
@@ -473,6 +474,33 @@ class Iyzipay extends PaymentModule
         return $this->display(__FILE__, 'views/templates/front/confirmation.tpl');
     }
 
+    private function setcookieSameSite($name, $value, $expire, $path, $domain, $secure, $httponly) {
+        if (PHP_VERSION_ID < 70300) {
+            setcookie($name, $value, $expire, "$path; samesite=None", $domain, $secure, $httponly);
+        }
+        else {
+            setcookie($name, $value, [
+                'expires' => $expire,
+                'path' => $path,
+                'domain' => $domain,
+                'samesite' => 'None',
+                'secure' => $secure,
+                'httponly' => $httponly
+            ]);
+        }
+    }
+
+    private function checkAndSetCookieSameSite(){
+        $checkCookieNames = array('PHPSESSID','OCSESSID','default','PrestaShop-','wp_woocommerce_session_');
+        foreach ($_COOKIE as $cookieName => $value) {
+            foreach ($checkCookieNames as $checkCookieName){
+                if (stripos($cookieName,$checkCookieName) === 0) {
+                    $this->setcookieSameSite($cookieName,$_COOKIE[$cookieName], time() + 86400, "/", $_SERVER['SERVER_NAME'],true, true);
+                }
+            }
+        }
+    }
+    
     /**
      * @return mixed
      */
