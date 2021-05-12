@@ -23,159 +23,159 @@
 *  International Registered Trademark & Property of paywithiyzico
 *}
 
-<div class= "row"> 
+<div class= "row">
     <div class="col-xs-12">
         {if (isset($error)) }
-        <div class="paiement_block">
-            <p class="alert alert-warning">{$error}</p>
-        </div>
+            <div class="paiement_block">
+                <p class="alert alert-warning">{$error}</p>
+            </div>
         {/if}
         <div>
             <p>{$pwi_description_first}<br>
                 {$pwi_description_second}</p>
         </div>
-        <div id="loadingContainer">
-            <div class="loading"></div>
-            <div class="brand">
+        <div id="pwiLoadingContainer">
+            <div class="pwiLoading"></div>
+            <div class="pwiBrand">
                 <p>iyzico</p>
             </div>
         </div>
         <div id="paywithiyzico-checkout-form" class="{$form_class}" style="display:none;">
-          {$pwi nofilter}
-          <script type="text/javascript">
-            var pwi;
-            pwi = '{$pwi nofilter}';
-            console.log(pwi);
-          </script>
+            {$pwi nofilter}
+            <script type="text/javascript">
+                var pwi;
+                pwi = '{$pwi nofilter}';
+                console.log(pwi);
+            </script>
         </div>
-        <div class="iyziCards" id="iyziCards">
-        <p id="termsError">{$contract_text}</p>
+        <div class="pwiCards" id="pwiCards">
+            <p id="termsError">{$contract_text}</p>
         </div>
     </div>
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
 {literal}
-<style>
-.iyziCards {
-    width: 100%;
-    text-align: center;
-    margin-bottom: 30px;
-    margin-top: 30px;
-}
+    <style>
+        .pwiCards {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 30px;
+        }
 
-.iyziCards img {
-  width: 500px;
-  margin-bottom: 15px;
-  text-align: center;
-}
+        .pwiCards img {
+            width: 500px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
 
-img[src*="paywithiyzico"] {
-    width: 20%;
-}
+        img[src*="paywithiyzico"] {
+            width: 20%;
+        }
 
-.iyziCards p {
-  text-align:center;
-  font-weight: bold;
-}
+        .pwiCards p {
+            text-align:center;
+            font-weight: bold;
+        }
 
-#checkout-payment-step label {
-    text-align: left;
-}
+        #checkout-payment-step label {
+            text-align: left;
+        }
 
-.loading{width:40px;height:40px;background-color:#1E64FF;margin:100px auto;-webkit-animation:sk-rotateplane 1.2s infinite ease-in-out;animation:sk-rotateplane 1.2s infinite ease-in-out}@-webkit-keyframes sk-rotateplane{0%{-webkit-transform:perspective(120px)}50%{-webkit-transform:perspective(120px) rotateY(180deg)}100%{-webkit-transform:perspective(120px) rotateY(180deg) rotateX(180deg)}}@keyframes sk-rotateplane{0%{transform:perspective(120px) rotateX(0) rotateY(0);-webkit-transform:perspective(120px) rotateX(0) rotateY(0)}50%{transform:perspective(120px) rotateX(-180.1deg) rotateY(0);-webkit-transform:perspective(120px) rotateX(-180.1deg) rotateY(0)}100%{transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg);-webkit-transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg)}}.brand{margin:auto}.brand p{color:#1E64FF;text-align:center;margin-top:-100px}
-</style>
-<script>
+        .pwiLoading{width:40px;height:40px;background-color:#1E64FF;margin:100px auto;-webkit-animation:sk-rotateplane 1.2s infinite ease-in-out;animation:sk-rotateplane 1.2s infinite ease-in-out}@-webkit-keyframes sk-rotateplane{0%{-webkit-transform:perspective(120px)}50%{-webkit-transform:perspective(120px) rotateY(180deg)}100%{-webkit-transform:perspective(120px) rotateY(180deg) rotateX(180deg)}}@keyframes sk-rotateplane{0%{transform:perspective(120px) rotateX(0) rotateY(0);-webkit-transform:perspective(120px) rotateX(0) rotateY(0)}50%{transform:perspective(120px) rotateX(-180.1deg) rotateY(0);-webkit-transform:perspective(120px) rotateX(-180.1deg) rotateY(0)}100%{transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg);-webkit-transform:perspective(120px) rotateX(-180deg) rotateY(-179.9deg)}}.pwiBrand{margin:auto}.pwiBrand p{color:#1E64FF;text-align:center;margin-top:-100px}
+    </style>
+    <script>
 
-var contractCheck = document.getElementsByClassName("js-terms");
+        var contractCheck = document.getElementsByClassName("js-terms");
 
-$( document ).ready(function() {
+        $( document ).ready(function() {
 
-  if(contractCheck.length == 1) {
+            if(contractCheck.length == 1) {
 
-        $("input[name='payment-option']").click(function () {
-            $("button[class='btn btn-primary center-block']").show();
+                $("input[name='payment-option']").click(function () {
+                    $("button[class='btn btn-primary center-block']").show();
 
-            if ($("input[id='conditions_to_approve[terms-and-conditions]']").is(':checked')) {
+                    if ($("input[id='conditions_to_approve[terms-and-conditions]']").is(':checked')) {
 
-                $("#loadingContainer").hide();
-                window.location.href = pwi;
-                $('#iyziCards').hide();
-           
-            } else {
+                        $("#pwiLoadingContainer").hide();
+                        window.location.href = pwi;
+                        $('#pwiCards').hide();
 
-              $('#iyziCards').show();
-              $("#loadingContainer").show();
-              $("#paywithiyzico-checkout-form").hide();                 
-            
-            }
-
-        });
-
-        $("input[data-module-name='paywithiyzico']").click(function () {
-              
-                $("button[class='btn btn-primary center-block']").hide();
-
-                $("input[id='conditions_to_approve[terms-and-conditions]']").change(function () {
-
-                    if (this.checked) {
-            
-
-                         $("#loadingContainer").hide();
-                         window.location.href = pwi;
-                         $('#iyziCards').hide();
-                     
-            
                     } else {
 
-                       $('#iyziCards').show();
-                       $("#loadingContainer").show();
-                       $("#paywithiyzico-checkout-form").hide();
-                       
-                    }
-              });
-      });        
-  } else {
+                        $('#pwiCards').show();
+                        $("#pwiLoadingContainer").show();
+                        $("#paywithiyzico-checkout-form").hide();
 
-        $("input[name='payment-option']").click(function () {
-            $("button[class='btn btn-primary center-block']").show();
+                    }
+
+                });
+
+                $("input[data-module-name='paywithiyzico']").click(function () {
+
+                    $("button[class='btn btn-primary center-block']").hide();
+
+                    $("input[id='conditions_to_approve[terms-and-conditions]']").change(function () {
+
+                        if (this.checked) {
+
+
+                            $("#pwiLoadingContainer").hide();
+                            window.location.href = pwi;
+                            $('#pwiCards').hide();
+
+
+                        } else {
+
+                            $('#pwiCards').show();
+                            $("#pwiLoadingContainer").show();
+                            $("#paywithiyzico-checkout-form").hide();
+
+                        }
+                    });
+                });
+            } else {
+
+                $("input[name='payment-option']").click(function () {
+                    $("button[class='btn btn-primary center-block']").show();
+                });
+
+                $("input[data-module-name='paywithiyzico']").click(function () {
+
+                    $("button[class='btn btn-primary center-block']").hide();
+
+                    $("#pwiLoadingContainer").hide();
+                    $('#pwiCards').hide();
+                    $("#paywithiyzico-checkout-form").show();
+
+                });
+            }
+
+            $(".material-icons").click(function(){
+
+                location.reload(true);
+
+            });
+
+            $("#promo-code > form ").submit(function(){
+
+                var promoStatus = document.getElementsByClassName("promo-input");
+                var promoValue = promoStatus[0].value.length;
+
+                if(promoValue != 0) {
+
+                    location.reload(true);
+
+                }
+
+            });
+
+
+
+
         });
 
-        $("input[data-module-name='paywithiyzico']").click(function () {
-              
-          $("button[class='btn btn-primary center-block']").hide();
 
-          $("#loadingContainer").hide();
-          $('#iyziCards').hide();
-          $("#paywithiyzico-checkout-form").show();
-
-        });        
-  }
-
-  $(".material-icons").click(function(){
-
-      location.reload(true);
-
-  });
-
-  $("#promo-code > form ").submit(function(){
-
-    var promoStatus = document.getElementsByClassName("promo-input");
-    var promoValue = promoStatus[0].value.length;
-
-    if(promoValue != 0) {
-        
-      location.reload(true);
-
-    }
-
-  });
-
-
-  
-
-});
-
-
-</script>
+    </script>
 {/literal}

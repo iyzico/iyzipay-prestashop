@@ -2,7 +2,7 @@
 <module>
     <name>paywithiyzico</name>
     <displayName><![CDATA[paywithiyzico]]></displayName>
-    <version><![CDATA[1.0.1]]></version>
+    <version><![CDATA[1.0.2]]></version>
     <description><![CDATA[Pay with iyzico Payment Gateway for PrestaShop]]></description>
     <author><![CDATA[paywithiyzico]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
