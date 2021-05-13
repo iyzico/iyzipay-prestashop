@@ -166,6 +166,8 @@ class Iyzipay extends PaymentModule
             $this->postProcess();
         }
 
+        $this->registerHook('ModuleRoutes');
+
         $this->setIyziWebhookUrlKey();
 
         $this->context->smarty->assign('module_dir', $this->_path);
