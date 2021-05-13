@@ -44,7 +44,7 @@ class Iyzipay extends PaymentModule
     {
         $this->name = 'iyzipay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.1.0';
+        $this->version = '1.1.1';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -165,6 +165,8 @@ class Iyzipay extends PaymentModule
         if (((bool)Tools::isSubmit('submitIyzipayModule')) == true) {
             $this->postProcess();
         }
+
+        $this->setIyziWebhookUrlKey();
 
         $this->context->smarty->assign('module_dir', $this->_path);
 
@@ -391,7 +393,8 @@ class Iyzipay extends PaymentModule
     public function getIyziWebhookUrlKey(){
         if (!Configuration::get('iyzipay_webhook_url_key')){
             $output = null;
-            $output .= $this->displayError('Webhook URL üretilemedi!');
+            $lanugage = $this->context->language->iso_code;
+            $output .= ($lanugage == 'tr' ) ? $this->displayError('Webhook URL üretilemedi!') : $this->displayError('Webhook URL did not create!');
             return $output;
         }
         else{
