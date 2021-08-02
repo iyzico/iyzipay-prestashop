@@ -1,4 +1,4 @@
-# Pay with iyzico - PrestaShop Payment Gateway
+# Pay with iyzico - PrestaShop 1.6.x Payment Gateway
 ------------
 * Create live account at https://merchant.iyzipay.com
 * Create test account at https://sandbox-merchant.iyzipay.com
@@ -13,8 +13,7 @@
 
 # Installation
 ---------------
-* Click “clone or download” and create paywithiyzico.zip file for iyzipay folder then install with PrestaShop Module installation page
-* Click “clone or download” and Unzip the folder and upload the files to prestahshop modules directory where other modules runs.
+* Click “clone or download” and create paywithiyzico.zip file for paywithiyzico folder then install with PrestaShop Module installation page
 
 * <a href="https://dev.iyzipay.com/tr/acik-kaynak/prestashop">Detailed Info</a>
 
@@ -22,7 +21,6 @@
 ---------------------
 * Payment support for manually created orders via admin panel
 * Installment management support
-* iyzico protected script support
 
 # Notes
 ---------------
