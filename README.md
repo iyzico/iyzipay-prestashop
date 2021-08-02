@@ -8,12 +8,12 @@
 ------------
 * PHP 5.4 and greater.
 * cURL
-* PrestaShop 1.7 and greater.
-* iyzico Prestashop 1.7
+* PrestaShop 1.6 and greater.
+* iyzico Prestashop 1.6
 
 # Installation
 ---------------
-* Click “clone or download” and create iyzipay.zip file for iyzipay folder then install with PrestaShop Module installation page
+* Click “clone or download” and create paywithiyzico.zip file for iyzipay folder then install with PrestaShop Module installation page
 * Click “clone or download” and Unzip the folder and upload the files to prestahshop modules directory where other modules runs.
 
 * <a href="https://dev.iyzipay.com/tr/acik-kaynak/prestashop">Detailed Info</a>
