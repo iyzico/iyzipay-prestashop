@@ -23,21 +23,38 @@
 *  International Registered Trademark & Property of iyzico
 *}
 
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" role="tablist">
-	<li class="active"><a href="#template_1" role="tab" data-toggle="tab">iyzico</a></li>
-	<li><a href="#template_2" role="tab" data-toggle="tab">Korumalı Alışveriş</a></li>
-	<li><a href="#template_3" role="tab" data-toggle="tab">S.S.S</a></li>
+{if $iyzipay_pwi_first_enabled_status == 0}
 	{if $languageIsoCode == 'tr'}
-		<li><a href="#template_4" role="tab" data-toggle="tab">Webhook Entegrasyonu</a></li>
+		<div class="alert alert-danger" role="alert">
+			<h1>iyzico İle Öde modülü aktif değil!</h1>
+		</div>
+		<p>iyzico ile Öde modülünü kurmadan iyzico Ödeme Formu ayarlarına erişemezsiniz.</p>
+		<p><strong>Prestashop 1.7 - iyzico ile Öde</strong> modülünün kurulumunu tamamlayınız: <a href="https://dev.iyzipay.com/tr/acik-kaynak/prestashop" target="_blank"> https://dev.iyzipay.com/tr/acik-kaynak/prestashop </a></p>
 	{else}
-		<li><a href="#template_4" role="tab" data-toggle="tab">Webhook Integration</a></li>
+		<div class="alert alert-danger" role="alert">
+			<h1>Pay with iyzico module is not enable!</h1>
+		</div>
+		<p>You can not access Settings of iyzico Checkout Form Module without installing the pay with iyzico module.</p>
+		<p>Complete the installation of the <strong>Prestashop 1.7 - Pay with iyzico</strong> module via dev.iyzipay: <a href="https://dev.iyzipay.com/tr/acik-kaynak/prestashop" target="_blank"> https://dev.iyzipay.com/tr/acik-kaynak/prestashop </a></p>
+
 	{/if}
-</ul>
-<!-- Tab panes -->
-<div class="tab-content">
-	<div class="tab-pane active" id="template_1">{include file='./template_1.tpl'}</div>
-	<div class="tab-pane" id="template_2">{include file='./template_2.tpl'}</div>
-	<div class="tab-pane" id="template_3">{include file='./template_3.tpl'}</div>
-	<div class="tab-pane" id="template_4">{include file='./template_4.tpl'}</div>
-</div>
+{else}
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active"><a href="#template_1" role="tab" data-toggle="tab">iyzico</a></li>
+		<li><a href="#template_2" role="tab" data-toggle="tab">Korumalı Alışveriş</a></li>
+		<li><a href="#template_3" role="tab" data-toggle="tab">S.S.S</a></li>
+		{if $languageIsoCode == 'tr'}
+			<li><a href="#template_4" role="tab" data-toggle="tab">Webhook Entegrasyonu</a></li>
+		{else}
+			<li><a href="#template_4" role="tab" data-toggle="tab">Webhook Integration</a></li>
+		{/if}
+	</ul>
+	<!-- Tab panes -->
+	<div class="tab-content">
+		<div class="tab-pane active" id="template_1">{include file='./template_1.tpl'}</div>
+		<div class="tab-pane" id="template_2">{include file='./template_2.tpl'}</div>
+		<div class="tab-pane" id="template_3">{include file='./template_3.tpl'}</div>
+		<div class="tab-pane" id="template_4">{include file='./template_4.tpl'}</div>
+	</div>
+{/if}
