@@ -2,8 +2,8 @@
 
 global $_MODULE;
 $_MODULE = array();
-$_MODULE['<{iyzipay}prestashop>iyzipay_eb22f094ae2dc17aff069b4080593681'] = 'iyzico Ödeme Modülü';
-$_MODULE['<{iyzipay}prestashop>iyzipay_cb326e4910117145c5ddf577260dd454'] = 'PrestaShop için iyzico Ödeme Geçidi';
+$_MODULE['<{iyzipay}prestashop>iyzipay_8f494e88dbb21be8e3d70e90de26d3f6'] = 'iyzico Ödeme Formu Modülü';
+$_MODULE['<{iyzipay}prestashop>iyzipay_b051a29a5be8efc8c00de18ffc7168d2'] = 'PrestaShop için iyzico Ödeme Formu Modülü';
 $_MODULE['<{iyzipay}prestashop>iyzipay_6f74a2f771f9b8422e24de0f1e5552b2'] = 'Siparişinizde oluşan hata sebebi ile ödemeniz iptal edilmiştir. Lütfen tekrar deneyiniz.';
 $_MODULE['<{iyzipay}prestashop>iyzipay_868478716c083f38439fb9865bfad3f7'] = 'Ödemeniz alındı fakat siparişiniz oluşturulamadı. Lütfen site yöneticisi ile iletişime geçiniz.';
 $_MODULE['<{iyzipay}prestashop>iyzipay_8f88271ce67ff89c1a9e057c64ac8b1c'] = '3D Hatası oluştu.';
@@ -35,15 +35,11 @@ $_MODULE['<{iyzipay}prestashop>callback_e7e914b797ae5c9f8efc09f5b4817e6b'] = 'Si
 $_MODULE['<{iyzipay}prestashop>callback_6f74a2f771f9b8422e24de0f1e5552b2'] = 'Siparişinizde oluşan hata sebebi ile ödemeniz iptal edilmiştir. Lütfen tekrar deneyiniz.';
 $_MODULE['<{iyzipay}prestashop>callback_8f88271ce67ff89c1a9e057c64ac8b1c'] = '3D Hatası';
 $_MODULE['<{iyzipay}prestashop>callback_d25cd344b961a34184b1bb6ffa80710b'] = 'Genel Hata';
-$_MODULE['<{iyzipay}prestashop>callback_8f09da02ab72ea112fafefed99f3eb11'] = 'Taksit ile ödenmiştir.';
 $_MODULE['<{iyzipay}prestashop>callback_514c4aed82cae5530481b9a6e40915d8'] = 'Taksitli Alışveriş';
 $_MODULE['<{iyzipay}prestashop>callback_3d6596ea416c6c6521f523aa41ee12b0'] = 'Taksit Seçeneği:';
+$_MODULE['<{iyzipay}prestashop>callback_8f09da02ab72ea112fafefed99f3eb11'] = 'Taksit ile ödenmiştir.';
 $_MODULE['<{iyzipay}prestashop>callback_1ceebcbe9b57cd93212e4ca8945a894d'] = 'Komisyon Tutarı:';
 $_MODULE['<{iyzipay}prestashop>callback_868478716c083f38439fb9865bfad3f7'] = 'Ödemeniz alındı fakat siparişiniz oluşturulamadı. Lütfen site yöneticisi ile iletişime geçiniz.';
-$_MODULE['<{iyzipay}prestashop>confirmation_66b914a3d0878daed70f10d165196200'] = 'Bir hata oluştu. Daha fazla bilgi için lütfen satıcıyla iletişime geçin.';
-$_MODULE['<{iyzipay}prestashop>redirect_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Ödeme';
-$_MODULE['<{iyzipay}prestashop>redirect_902b0d55fddef6f8d651fe1035b7d4bd'] = 'Hata';
-$_MODULE['<{iyzipay}prestashop>validation_e61b0be95b713b117d27dbd19d75f69a'] = 'Ödeme yapılırken bir hata oluştu';
 $_MODULE['<{iyzipay}prestashop>confirmation_bddd470742bc2329733e489ed05a8ba1'] = 'Siparişiniz Tamamlandı.';
 $_MODULE['<{iyzipay}prestashop>confirmation_b2f40690858b404ed10e62bdf422c704'] = 'Ücret';
 $_MODULE['<{iyzipay}prestashop>confirmation_e5b8f00cb48fe623703902d21ed16f6f'] = 'Taksit Ücreti';

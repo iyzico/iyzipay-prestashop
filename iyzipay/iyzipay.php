@@ -44,7 +44,7 @@ class Iyzipay extends PaymentModule
     {
         $this->name = 'iyzipay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.1.1';
+        $this->version = '1.1.2';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -55,8 +55,8 @@ class Iyzipay extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName              = $this->l('iyzico Payment Module');
-        $this->description              = $this->l('iyzico Payment Gateway for PrestaShop');
+        $this->displayName              = $this->l('iyzico Checkout Form Module');
+        $this->description              = $this->l('iyzico Checkout Form Module for PrestaShop');
         $this->basketItemsNotMatch      = $this->l('basketItemsNotMatch');
         $this->uniqError                = $this->l('uniqError');
         $this->error3D                  = $this->l('error3D');
@@ -180,6 +180,15 @@ class Iyzipay extends PaymentModule
 
         $this->context->smarty->assign('languageIsoCode', $this->context->language->iso_code);
 
+        $pwi_status_after_enabled_pwi = Configuration::get('iyzipay_pwi_first_enabled_status', true);
+        if (!Module::isEnabled(paywithiyzico) && $pwi_status_after_enabled_pwi != 1){
+            $this->context->smarty->assign('iyzipay_pwi_first_enabled_status', 0);
+        }
+        else{
+            Configuration::updateValue('iyzipay_pwi_first_enabled_status',1);
+            $this->context->smarty->assign('iyzipay_pwi_first_enabled_status', 1);
+        }
+
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
 
         /* Set iyziTitle */
@@ -213,7 +222,14 @@ class Iyzipay extends PaymentModule
             'id_language' => $this->context->language->id,
         );
 
-        return $helper->generateForm(array($this->getConfigForm()));
+
+        $pwi_status_after_enabled_pwi = Configuration::get('iyzipay_pwi_first_enabled_status', true);
+        if (!Module::isEnabled(paywithiyzico) && $pwi_status_after_enabled_pwi != 1){
+            return $helper->generateForm(array());
+        }
+        else{
+            return $helper->generateForm(array($this->getConfigForm()));
+        }
     }
 
     /**

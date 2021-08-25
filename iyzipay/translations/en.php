@@ -2,8 +2,8 @@
 
 global $_MODULE;
 $_MODULE = array();
-$_MODULE['<{iyzipay}prestashop>iyzipay_eb22f094ae2dc17aff069b4080593681'] = 'iyzico Payment Module';
-$_MODULE['<{iyzipay}prestashop>iyzipay_cb326e4910117145c5ddf577260dd454'] = 'iyzico Payment Gateway for PrestaShop';
+$_MODULE['<{iyzipay}prestashop>iyzipay_8f494e88dbb21be8e3d70e90de26d3f6'] = 'iyzico Checkout Form Module';
+$_MODULE['<{iyzipay}prestashop>iyzipay_b051a29a5be8efc8c00de18ffc7168d2'] = 'iyzico Checkout Form Module for PrestaShop';
 $_MODULE['<{iyzipay}prestashop>iyzipay_6f74a2f771f9b8422e24de0f1e5552b2'] = 'Your order has been canceled. Please try again. - basket Items Not Match';
 $_MODULE['<{iyzipay}prestashop>iyzipay_868478716c083f38439fb9865bfad3f7'] = 'Your payment was made but your order could not be created. Please enter it with the site administrator.';
 $_MODULE['<{iyzipay}prestashop>iyzipay_8f88271ce67ff89c1a9e057c64ac8b1c'] = '3D Error';
@@ -35,15 +35,11 @@ $_MODULE['<{iyzipay}prestashop>callback_e7e914b797ae5c9f8efc09f5b4817e6b'] = 'Or
 $_MODULE['<{iyzipay}prestashop>callback_6f74a2f771f9b8422e24de0f1e5552b2'] = 'Your order has been canceled. Please try again. - basket Items Not Match';
 $_MODULE['<{iyzipay}prestashop>callback_8f88271ce67ff89c1a9e057c64ac8b1c'] = '3D Error';
 $_MODULE['<{iyzipay}prestashop>callback_d25cd344b961a34184b1bb6ffa80710b'] = 'General Error';
-$_MODULE['<{iyzipay}prestashop>callback_8f09da02ab72ea112fafefed99f3eb11'] = 'Payment by installment';
 $_MODULE['<{iyzipay}prestashop>callback_514c4aed82cae5530481b9a6e40915d8'] = 'Installment Shopping';
 $_MODULE['<{iyzipay}prestashop>callback_3d6596ea416c6c6521f523aa41ee12b0'] = 'Installment Option: ';
+$_MODULE['<{iyzipay}prestashop>callback_8f09da02ab72ea112fafefed99f3eb11'] = 'Payment by installment';
 $_MODULE['<{iyzipay}prestashop>callback_1ceebcbe9b57cd93212e4ca8945a894d'] = 'Commission Amount: ';
 $_MODULE['<{iyzipay}prestashop>callback_868478716c083f38439fb9865bfad3f7'] = 'Your payment was made but your order could not be created. Please enter it with the site administrator.';
-$_MODULE['<{iyzipay}prestashop>confirmation_66b914a3d0878daed70f10d165196200'] = 'An error occured. Please contact the merchant to have more informations';
-$_MODULE['<{iyzipay}prestashop>redirect_c453a4b8e8d98e82f35b67f433e3b4da'] = 'Payment';
-$_MODULE['<{iyzipay}prestashop>redirect_902b0d55fddef6f8d651fe1035b7d4bd'] = 'Error';
-$_MODULE['<{iyzipay}prestashop>validation_e61b0be95b713b117d27dbd19d75f69a'] = 'An error occurred while processing payment';
 $_MODULE['<{iyzipay}prestashop>confirmation_bddd470742bc2329733e489ed05a8ba1'] = 'Your order is complete.	';
 $_MODULE['<{iyzipay}prestashop>confirmation_b2f40690858b404ed10e62bdf422c704'] = 'Amount';
 $_MODULE['<{iyzipay}prestashop>confirmation_e5b8f00cb48fe623703902d21ed16f6f'] = 'Installment Fee';

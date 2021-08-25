@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
     <name>iyzipay</name>
-    <displayName><![CDATA[iyzico &Ouml;deme Mod&uuml;l&uuml;]]></displayName>
-    <version><![CDATA[1.1.1]]></version>
-    <description><![CDATA[PrestaShop i&ccedil;in iyzico &Ouml;deme Ge&ccedil;idi]]></description>
+    <displayName><![CDATA[iyzico Ödeme Formu Modülü]]></displayName>
+    <version><![CDATA[1.1.2]]></version>
+    <description><![CDATA[PrestaShop için iyzico Ödeme Formu Modülü]]></description>
     <author><![CDATA[iyzico]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
-	<confirmUninstall><![CDATA[emin misiniz ?]]></confirmUninstall>
+    <confirmUninstall><![CDATA[emin misiniz ?]]></confirmUninstall>
     <is_configurable>1</is_configurable>
     <need_instance>1</need_instance>
-	<limited_countries></limited_countries>
+    <limited_countries></limited_countries>
 </module>
