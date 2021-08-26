@@ -151,6 +151,7 @@ class Iyzipay extends PaymentModule
             && Configuration::deleteByName('iyzipay_display')
             && Configuration::deleteByName('iyzipay_overlay_position')
             && Configuration::deleteByName('iyzipay_overlay_token')
+            && Configuration::deleteByName('iyzipay_pwi_first_enabled_status')
             && parent::uninstall();
     }
 
