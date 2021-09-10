@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>iyzicocheckoutform</name>
+	<displayName><![CDATA[iyzico &Ouml;deme Formu]]></displayName>
+	<version><![CDATA[1.1.0]]></version>
+	<description><![CDATA[iyzico checkout form Internet &uuml;zerinden m&uuml;şterilerinize &ouml;deme y&ouml;ntemleri sunmanın en hızlı ve en kolay yoludur. Sizi karmaşık Sanal POS başvuru işlemlerinden ve bekleme s&uuml;relerinden kurtarır.]]></description>
+	<author><![CDATA[KahveDigital]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall><![CDATA[Are you sure about removing these details?]]></confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
