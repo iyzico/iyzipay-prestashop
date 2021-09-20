@@ -55,8 +55,8 @@ class PaywithiyzicoObject
         $paywithiyzico->basketId = $params['cookie']->id_cart;
         $paywithiyzico->paymentGroup = 'PRODUCT';
         $paywithiyzico->callbackUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'index.php?module_action=init&fc=module&module=paywithiyzico&controller=callback';
-        $paywithiyzico->cancelUrl = "https://www.google.com";
-        $paywithiyzico->paymentSource = _PS_VERSION_.'|PRESTASHOP|PIE|1.0.0';
+        $paywithiyzico->cancelUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__;
+        $paywithiyzico->paymentSource = _PS_VERSION_.'|PRESTASHOP|PIE|1.0.3';
 
         return $paywithiyzico;
     }
