@@ -23,6 +23,9 @@
 * Payment support for manually created orders via admin panel
 * Installment management support
 * iyzico protected script support
+* Checkout Form Auto language
+* Samesite bug fixed
+* Alert Message 
 
 # Notes
 ---------------
