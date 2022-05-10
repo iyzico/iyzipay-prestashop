@@ -42,13 +42,23 @@ class IyzipayCheckoutFormObject
 
         $currency = new Currency((int) $params['cookie']->id_currency);
         $thisUserCurrency = $currency->iso_code;
+        $language=Configuration::get('iyzipay_language');
 
         $shipping = $params['cart']->getOrderTotal(true, Cart::ONLY_SHIPPING);
         $basketItems = $params['cart']->getProducts();
         $httpProtocol = !Configuration::get('PS_SSL_ENABLED') ? 'http://' : 'https://';
 
         $iyzico = new stdClass();
-        $iyzico->locale = $context->language->iso_code;
+      
+        if(empty($language))
+        {
+          $iyzico->locale = $context->language->iso_code;
+
+        }else {
+
+          $iyzico->locale = Configuration::get('iyzipay_language');
+
+        }
         $iyzico->conversationId = $params['cookie']->id_cart;
         $iyzico->price = IyzipayHelper::orderProductCalc($basketItems, $shipping);
         $iyzico->paidPrice = IyzipayHelper::priceParser($params['cart']->getOrderTotal());

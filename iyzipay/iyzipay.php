@@ -44,7 +44,7 @@ class Iyzipay extends PaymentModule
     {
         $this->name = 'iyzipay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.1.2';
+        $this->version = '1.2.0';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -54,6 +54,7 @@ class Iyzipay extends PaymentModule
         $this->bootstrap = true;
 
         parent::__construct();
+
 
         $this->displayName              = $this->l('iyzico Checkout Form Module');
         $this->description              = $this->l('iyzico Checkout Form Module for PrestaShop');
@@ -73,17 +74,27 @@ class Iyzipay extends PaymentModule
 
         $this->confirmUninstall = $this->l('are you sure ?');
 
-        $this->limited_countries = array('TR','FR','EN');
 
-        $this->limited_currencies = array('TRY','EUR','USD');
+        $this->limited_currencies = array('TRY','EUR','USD' , 'GBP' , 'RUB' , 'CHF' , 'NOK');
+
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
 
         $this->extra_mail_vars = array(
             '{instalmentFee}' => '',
         );
+        $versionControl = Configuration::get('PS_INSTALL_VERSION');
+        $versionControlCheck = str_replace(".", "", $versionControl);
+        if ($versionControlCheck < 1775 )
+        {
+          $this->checkAndSetCookieSameSite();
+        }
+         Configuration::updateValue('PS_CONDITIONS_CMS_ID',0);
 
-        $this->checkAndSetCookieSameSite();
+
+
+
+
     }
 
     /**
@@ -99,14 +110,8 @@ class Iyzipay extends PaymentModule
 
         $iso_code = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT'));
 
-        if (in_array($iso_code, $this->limited_countries) == false) {
-            $this->_errors[] = $this->l('This module is not available in your country');
-            return false;
-        }
-
         $this->setIyziWebhookUrlKey();
 
-        //Configuration::updateValue('IYZIPAY_LIVE_MODE', false);
 
         include(dirname(__FILE__).'/sql/install.php');
 
@@ -152,6 +157,8 @@ class Iyzipay extends PaymentModule
             && Configuration::deleteByName('iyzipay_overlay_position')
             && Configuration::deleteByName('iyzipay_overlay_token')
             && Configuration::deleteByName('iyzipay_pwi_first_enabled_status')
+            && Configuration::deleteByName('iyzipay_language')
+            && Configuration::updateValue('PS_CONDITIONS_CMS_ID',3)
             && parent::uninstall();
     }
 
@@ -166,6 +173,8 @@ class Iyzipay extends PaymentModule
         if (((bool)Tools::isSubmit('submitIyzipayModule')) == true) {
             $this->postProcess();
         }
+        $sslControl = $_SERVER['HTTPS'] ;
+
 
         $this->registerHook('ModuleRoutes');
 
@@ -181,9 +190,16 @@ class Iyzipay extends PaymentModule
 
         $this->context->smarty->assign('languageIsoCode', $this->context->language->iso_code);
 
+        $this->context->smarty->assign('sslEnabled', $sslControl);
+
+        $this->context->smarty->assign('iyziApiType', Configuration::get('iyzipay_api_type'));
+
+        $this->context->smarty->assign('cookieSamesite', Configuration::get('PS_COOKIE_SAMESITE'));
+
         $pwi_status_after_enabled_pwi = Configuration::get('iyzipay_pwi_first_enabled_status', true);
-        if (!Module::isEnabled(paywithiyzico) && $pwi_status_after_enabled_pwi != 1){
+        if (!Module::isEnabled('paywithiyzico') && $pwi_status_after_enabled_pwi != 1){
             $this->context->smarty->assign('iyzipay_pwi_first_enabled_status', 0);
+
         }
         else{
             Configuration::updateValue('iyzipay_pwi_first_enabled_status',1);
@@ -225,7 +241,7 @@ class Iyzipay extends PaymentModule
 
 
         $pwi_status_after_enabled_pwi = Configuration::get('iyzipay_pwi_first_enabled_status', true);
-        if (!Module::isEnabled(paywithiyzico) && $pwi_status_after_enabled_pwi != 1){
+        if (!Module::isEnabled('paywithiyzico') && $pwi_status_after_enabled_pwi != 1){
             return $helper->generateForm(array());
         }
         else{
@@ -245,10 +261,12 @@ class Iyzipay extends PaymentModule
                     'icon' => 'icon-cogs',
                 ),
                 'input' => array(
+
                     array(
                         'type' => 'select',
                         'label' => $this->l('API Type'),
                         'name' => 'iyzipay_api_type',
+                        'desc' => $this->l('API Type Live or Sandbox'),
                         'required' => true,
                         'options' => array(
                             'query' => array(
@@ -263,6 +281,7 @@ class Iyzipay extends PaymentModule
                         'col' => 4,
                         'type' => 'text',
                         'name' => 'iyzipay_api_key',
+                        'desc'=> $this->l('Your API key with including 32 digit letter and number'),
                         'required' => true,
                         'label' => $this->l('Api Key'),
                     ),
@@ -270,19 +289,23 @@ class Iyzipay extends PaymentModule
                         'col' => 4,
                         'type' => 'text',
                         'name' => 'iyzipay_secret_key',
+                        'desc'=> $this->l('Your Secret Key with including 32 digit letter and number.'),
                         'required' => true,
                         'label' => $this->l('Secret Key'),
                     ),
                     array(
-                        'col' => 9,
+                        'col' => 8,
                         'type' => 'text',
                         'name' => 'iyzipay_option_text',
+                        'desc'=> $this->l('Payment option text / Provides multi-language support.Example :tr=iyzico|en=Credit Cart'),
                         'label' => $this->l('Payment Text'),
                     ),
+
                     array(
                         'type' => 'select',
                         'label' => $this->l('Display Form'),
                         'name' => 'iyzipay_display',
+                        'desc'=> $this->l('The appearance of your payment form'),
                         'required' => true,
                         'is_bool' => true,
                         'options' => array(
@@ -294,6 +317,24 @@ class Iyzipay extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
+
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('Checkout language'),
+                        'name' => 'iyzipay_language',
+                        'required' => true,
+                        'is_bool' => true,
+                        'options' => array(
+                            'query' => array(
+                                array('id' => '', 'name' => $this->l('Automatic')),
+                                array('id' => 'TR', 'name' => $this->l('Turkish')),
+                                array('id' => 'EN', 'name' => $this->l('English')),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    ),
+
                     array(
                         'type' => 'select',
                         'label' => $this->l('Overlay Script Position'),
@@ -310,6 +351,25 @@ class Iyzipay extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
+                    //SameSite Selectbox
+                    array(
+                          'type' => 'select',
+                          'label' => $this->l('Cookie SameSite'),
+                          'name' => 'PS_COOKIE_SAMESITE',
+                          'required' => true,
+                          'is_bool' => true,
+                          'desc'=> $this->l('Recommended should be selected as none.'),
+                          'options' => array(
+                              'query' => array(
+                                  array('id' => $this->sslEnabledSamesite(), 'name' => $this->l('None')),
+                                  array('id' => 'Lax', 'name' => $this->l('Lax')),
+                                  array('id' => 'Strict', 'name' => $this->l('Strict')),
+                              ),
+                              'id' => 'id',
+                              'name' => 'name',
+                          ),
+                      ),
+
                     array(
                         'type' => 'hidden',
                         'name' => 'iyzipay_overlay_token',
@@ -324,6 +384,7 @@ class Iyzipay extends PaymentModule
                 ),
             ),
         );
+
     }
 
     /**
@@ -342,6 +403,11 @@ class Iyzipay extends PaymentModule
             'iyzipay_display' => Configuration::get('iyzipay_display', true),
             'iyzipay_overlay_position' => Configuration::get('iyzipay_overlay_position', true),
             'iyzipay_overlay_token' => Configuration::get('iyzipay_overlay_token', true),
+            'iyzipay_language' => Configuration::get('iyzipay_language', true),
+            'PS_COOKIE_SAMESITE' => Configuration::get('PS_COOKIE_SAMESITE' , true),
+
+
+
         );
     }
 
@@ -352,6 +418,7 @@ class Iyzipay extends PaymentModule
     {
 
         $form_values = $this->getConfigFormValues();
+
 
         foreach (array_keys($form_values) as $key) {
             Configuration::updateValue($key, Tools::getValue($key));
@@ -555,6 +622,7 @@ class Iyzipay extends PaymentModule
         return $this->display(__FILE__, 'views/templates/front/confirmation.tpl');
     }
 
+
     private function setcookieSameSite($name, $value, $expire, $path, $domain, $secure, $httponly) {
 
         if (PHP_VERSION_ID < 70300) {
@@ -588,13 +656,33 @@ class Iyzipay extends PaymentModule
         }
     }
 
+
+
+    private function sslEnabledSamesite ()
+    {
+      $iyzipayApiType = Configuration::get('iyzipay_api_type');
+      $versionControl = Configuration::get('PS_INSTALL_VERSION');
+      $versionControlCheck = str_replace(".", "", $versionControl);
+      if ($versionControlCheck >= 1775 && empty($_SERVER['HTTPS']) && $iyzipayApiType != 'https://api.iyzipay.com')
+        {
+        $sslEnabledSamesite = 'SameSite=None' ;
+      }
+      else {
+          $sslEnabledSamesite = 'None' ;
+      }
+      return $sslEnabledSamesite;
+    }
+
     /**
      * @return mixed
      */
     private function getOptionText()
     {
         $title = Configuration::get('iyzipay_option_text');
-        $isoCode = $this->context->language->iso_code;
+
+        $language=Configuration::get('iyzipay_language');
+
+        empty($language)? $isoCode = $this->context->language->iso_code : $isoCode  = strtolower(Configuration::get('iyzipay_language'));
 
         $title = $this->iyziMultipLangTitle($title, $isoCode);
 
@@ -630,17 +718,31 @@ class Iyzipay extends PaymentModule
     private function successAssign($iyzicoCheckoutFormResponse)
     {
         $logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name.'/views/img/cards.png');
+        $iyzipay_language = Configuration::get('iyzipay_language');
 
         $title = $this->getOptionText();
+
 
         $this->context->smarty->assign('response', $iyzicoCheckoutFormResponse->checkoutFormContent);
         $this->context->smarty->assign('form_class', Configuration::get('iyzipay_display'));
         $this->context->smarty->assign('credit_card', $title);
-        $this->context->smarty->assign('contract_text', $this->l('Contract approval is required for the payment form to be active.'));
+        if(empty($iyzipay_language))
+        {
+          $this->context->smarty->assign('contract_text', $this->l('Contract approval is required for the payment form to be active.'));
+        }
+        elseif ($iyzipay_language == 'TR') {
+          $this->context->smarty->assign('contract_text', 'Ödeme formunun aktif olması için sözleşme onayı gereklidir.');
+        }
+        else {
+          $this->context->smarty->assign('contract_text', 'Contract approval is required for the payment form to be active.');
+
+        }
+
         $this->context->smarty->assign('cards', $logo);
         $this->context->smarty->assign('module_dir', __PS_BASE_URI__);
-
+        Configuration::updateValue('PS_CONDITIONS_CMS_ID',3);
         return $this->paymentOptionResult();
+
     }
 
     /**
@@ -692,5 +794,6 @@ class Iyzipay extends PaymentModule
 
         return $title;
     }
+
 
 }

@@ -27,7 +27,7 @@
 <h3>{l s='Your order is complete.'  mod='iyzipay'}</h3>
 <p>
 	<br />- {l s='Amount' mod='iyzipay'} : <span class="price"><strong>{$total|escape:'htmlall':'UTF-8'}</strong></span>
-{if $installmentFee != ''}	
+{if $installmentFee != ''}
 	<br />- {l s='installment Fee' mod='iyzipay'} : <span class="installmentFee"><strong>{$installmentFee|escape:'html':'UTF-8'}</strong></span>
 {/if}
 	<br />- {l s='Reference' mod='iyzipay'} : <span class="reference"><strong>{$reference|escape:'html':'UTF-8'}</strong></span>

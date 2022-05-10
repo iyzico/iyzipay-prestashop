@@ -98,15 +98,51 @@
 			<p style="text-align:left;"><strong>V</strong>: {$iyziVersion}</p>
 		</div>
 		<div class="col-md-10">
+			{if $languageIsoCode == 'tr'}
 			<h1>Hemen Başla !</h1>
 			<p><a href="https://merchant.iyzipay.com">https://merchant.iyzipay.com</a> veya <a href="https://sandbox-merchant.iyzipay.com">https://sandbox-merchant.iyzipay.com</a> adresi üzerinden müşteri bilgileriniz ile giriş yapınız. Panele eriştiğiniz sırada sağ üst köşede profil bilgilerinizi göreceksiniz. Profil bilgilerinizin üzerine tıkladıktan sonra “Ayarlar” menüsüne tıklayınız. “API Anahtları" alanından “API Anahtarı ve Güvenlik Anahtarı" bilgilerinizi kopyalayıp PrestaShop iyzico panelinde bulunan “API Anahtarı” ve “Güvenlik Anahtarı” alanlarına yapıştırınız..</p>
-			<h2>Webhook URL</h2>
-			<p>{$websiteBaseUrl}iyzico/api/webhook/{$webhookUrlKey}</p>
-			{if $languageIsoCode == 'tr'}
-				<p><strong>Webhook entegrasyonunu yapmayı unutmayınız.</strong></p>
+			<p><strong>*PrestaShop admin paneli içnde Yapılandır > Gelişmiş Parametler > Yönetim > Genel > Cookie SameSite Hiçbiri(None) yapmayı unutmayınız.</strong></p>
+			<hr>
+			<p style="font-size:15px;"><b>Webhook URL</b>  : {$websiteBaseUrl}iyzico/api/webhook/{$webhookUrlKey}</p>
+			<p><strong>*Webhook entegrasyonunu yapmayı unutmayınız.</strong></p>
+			<hr>
 			{else}
-				<p><strong>Don't forget to do webhook Integration.</strong></p>
+			<h1>Start Now !</h1>
+			<p>Log in with your customer information via <a href="https://merchant.iyzipay.com">https://merchant.iyzipay.com </a> or <a href="https://sandbox-merchant.iyzipay.com">https://sandbox-merchant.iyzipay.com</a>. When you access the panel, you will see your profile information in the upper right corner. After clicking on your profile information, click on the “Settings” menu. Copy your "API Key and Security Key" information from the "API Keys" field and paste it into the "API Key" and "Security Key" fields on the PrestaShop iyzico panel.
+			<p><strong>*Configure > Advanced Parameters > General > Cookie SameSite Don't forget to set None.</strong></p>
+			<hr>
+			<b>Webhook URL</b>  : {$websiteBaseUrl}iyzico/api/webhook/{$webhookUrlKey}
+			<p><strong>*Don't forget to do webhook Integration.</strong></p>
+			<hr>
 			{/if}
+			{if empty($sslEnabled) && $iyziApiType == 'https://api.iyzipay.com'}
+			{if $languageIsoCode == 'tr'}
+        <div class="alert alert-warning" role="alert">
+           Gerçek Ödeme alabilmek için SSL aktif etmeniz gerekmektedir. Test hesaplar için geçerli değildir.
+				 </div>
+				{else}
+				<div class="alert alert-warning" role="alert">
+					You must enable SSL on the store if you want to use this module in live.
+        </div>
+				{/if}
+			{/if}
+			{if $cookieSamesite == 'Lax' || $cookieSamesite == 'Strict'}
+			{if $languageIsoCode == 'tr'}
+        <div class="alert alert-warning" role="alert">
+					PrestaShop Admin Panel içinde Yapılandır > Gelişmiş Parametler > Yönetim > Genel > Cookie SameSite Hiçbiri(None) seçiniz  Veya İyzico eklenti içinde bulunan Cookie SameSite alannı Hiçbiri(None) olarak seçiniz.
+        </div>
+				{else}
+				<div class="alert alert-warning" role="alert">
+	         In PrestaShop Admin Panel, select Configure > Advanced Parameters > Administration General > Cookie SameSite None or Select the Cookie SameSite field in the iyzico plugin as None
+        </div>
+				{/if}
+			{/if}
+
+
+
+
+
+
 		</div>
 	</div>
 </div>

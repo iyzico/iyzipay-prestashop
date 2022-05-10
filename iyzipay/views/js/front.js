@@ -25,3 +25,88 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
+
+<script>
+
+    var contractCheck = document.getElementsByClassName("js-terms");
+
+    $( document ).ready(function() {
+
+        if(contractCheck.length == 1) {
+
+            $("input[name='payment-option']").click(function () {
+                $("button[class='btn btn-primary center-block']").show();
+
+                if ($("input[id='conditions_to_approve[terms-and-conditions]']").is(':checked')) {
+
+                    $("#iyzicoLoadingContainer").hide();
+                    $("#iyzipay-checkout-form").show();
+                    $('#iyziCards').hide();
+
+                } else {
+
+                    $('#iyziCards').show();
+                    $("#iyzicoLoadingContainer").show();
+                    $("#iyzipay-checkout-form").hide();
+
+                }
+
+            });
+
+            $("input[data-module-name='iyzipay']").click(function () {
+
+                $("button[class='btn btn-primary center-block']").hide();
+
+                $("input[id='conditions_to_approve[terms-and-conditions]']").change(function () {
+
+                    if (this.checked) {
+
+
+                        $("#iyzicoLoadingContainer").hide();
+                        $("#iyzipay-checkout-form").show();
+                        $('#iyziCards').hide();
+
+
+                    } else {
+
+                        $('#iyziCards').show();
+                        $("#iyzicoLoadingContainer").show();
+                        $("#iyzipay-checkout-form").hide();
+
+                    }
+                });
+            });
+        } else {
+
+            $("input[name='payment-option']").click(function () {
+                $("button[class='btn btn-primary center-block']").show();
+            });
+
+            $("input[data-module-name='iyzipay']").click(function () {
+
+                $("button[class='btn btn-primary center-block']").hide();
+
+                $("#iyzicoLoadingContainer").hide();
+                $('#iyziCards').hide();
+                $("#iyzipay-checkout-form").show();
+
+            });
+        }
+
+        $(".material-icons").click(function(){
+
+            location.reload(true);
+
+        });
+
+        $("#promo-code > form ").submit(function(){
+
+            var promoStatus = document.getElementsByClassName("promo-input");
+            var promoValue = promoStatus[0].value.length;
+
+            if(promoValue != 0) {
+                location.reload(true);
+            }
+        });
+    });
+</script>
