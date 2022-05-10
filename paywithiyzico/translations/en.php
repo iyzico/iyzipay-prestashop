@@ -17,9 +17,9 @@ $_MODULE['<{paywithiyzico}prestashop>paywithiyzico_3d6596ea416c6c6521f523aa41ee1
 $_MODULE['<{paywithiyzico}prestashop>paywithiyzico_1ceebcbe9b57cd93212e4ca8945a894d'] = 'Commission Amount: ';
 $_MODULE['<{paywithiyzico}prestashop>paywithiyzico_a5d9ecacc633acdc127212d6e57762ee'] = 'are you sure ?';
 $_MODULE['<{paywithiyzico}prestashop>paywithiyzico_92d4773a9f32fc3333cb8238471cf763'] = 'You have to enable the cURL extension on your server to install this module';
-$_MODULE['<{paywithiyzico}prestashop>paywithiyzico_cdbe2f170711683cb6624cf9c509cc99'] = 'This module is not available in your country';
 $_MODULE['<{paywithiyzico}prestashop>paywithiyzico_f4f70727dc34561dfde1a3c529b6205c'] = 'Settings';
 $_MODULE['<{paywithiyzico}prestashop>paywithiyzico_c9cc8cce247e49bae79f15173ce97354'] = 'Save';
+$_MODULE['<{paywithiyzico}prestashop>paywithiyzico_62d3e6f706cd08753269d1e7cb82acc0'] = 'Contract approval is required for the payment form to be active.	';
 $_MODULE['<{paywithiyzico}prestashop>callback_6a42b5c65308d870ac1ea113c9ee5fd0'] = 'Token Not Found';
 $_MODULE['<{paywithiyzico}prestashop>callback_e7e914b797ae5c9f8efc09f5b4817e6b'] = 'Order Not Found';
 $_MODULE['<{paywithiyzico}prestashop>callback_6f74a2f771f9b8422e24de0f1e5552b2'] = 'Your order has been canceled. Please try again. - basket Items Not Match';

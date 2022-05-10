@@ -43,7 +43,7 @@ class Paywithiyzico extends PaymentModule
     {
         $this->name = 'paywithiyzico';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.3';
+        $this->version = '1.0.5';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -69,10 +69,9 @@ class Paywithiyzico extends PaymentModule
         $this->commissionAmount         = $this->l('commissionAmount');
 
 
-        
+
         $this->confirmUninstall = $this->l('are you sure ?');
 
-        $this->limited_countries = array('TR','FR','EN');
 
         $this->limited_currencies = array('TRY','EUR','USD');
 
@@ -96,10 +95,7 @@ class Paywithiyzico extends PaymentModule
 
         $iso_code = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT'));
 
-        if (in_array($iso_code, $this->limited_countries) == false) {
-            $this->_errors[] = $this->l('This module is not available in your country');
-            return false;
-        }
+
 
         return parent::install() &&
             $this->registerHook('backOfficeHeader') &&
@@ -132,6 +128,7 @@ class Paywithiyzico extends PaymentModule
         $this->context->smarty->assign('module_dir', $this->_path);
 
         $this->context->smarty->assign('payWithIyzicoVersion', $this->version);
+        $this->context->smarty->assign('languageIsoCode', $this->context->language->iso_code);
 
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
 
@@ -216,7 +213,7 @@ class Paywithiyzico extends PaymentModule
     */
     public function hookBackOfficeHeader()
     {
-        
+
         if (Tools::getValue('configure') == $this->name) {
             $this->context->controller->addJS($this->_path.'views/js/back.js');
             $this->context->controller->addCSS($this->_path.'views/css/back.css');
@@ -231,7 +228,9 @@ class Paywithiyzico extends PaymentModule
 
     public function hookPaymentOptions($params)
     {
-
+      $currenyUnit = Context::getContext()->currency->iso_code;
+      if($currenyUnit == 'TRY')
+      {
         if(!$params['cart']->id_carrier)
             return $this->paymentOptionResult();
 
@@ -248,6 +247,7 @@ class Paywithiyzico extends PaymentModule
         }
 
         return $this->successAssign($paywithiyzicoResponse);
+         }
     }
 
     /**
@@ -256,7 +256,7 @@ class Paywithiyzico extends PaymentModule
      */
     public function PwiGenerate($params)
     {
-        
+
         $this->context->cookie->PwiTotalPrice = false;
         $this->context->cookie->PwiInstallmentFee = false;
         $this->context->cookie->PwiIyziToken = false;
@@ -336,34 +336,10 @@ class Paywithiyzico extends PaymentModule
     /**
      * @return mixed
      */
-
-    private function setcookieSameSite($name, $value, $expire, $path, $domain, $secure, $httponly) {
-
-        if (PHP_VERSION_ID < 70300) {
-
-            setcookie($name, $value, $expire, "$path; samesite=None", $domain, $secure, $httponly);
-        }
-        else {
-                return setcookie($name, $value, [
-                'expires' => $expire,
-                'path' => $path,
-                'domain' => $domain,
-                'samesite' => 'None',
-                'secure' => $secure,
-                'httponly' => $httponly,
-            ]);
-
-      
-        }
-    }
-
-    /**
-     * @return mixed
-     */
     private function getOptionText()
     {
         /* TR - EN */
-        
+
         $title = "iyzico ile Öde";
 
         if($this->context->language->iso_code != "tr") {
@@ -383,7 +359,19 @@ class Paywithiyzico extends PaymentModule
 
         $languageId = $this->context->cookie->id_lang;
         $languages = Language::getLanguage($languageId);
-        $languageIsoCode = $languages['iso_code'];
+
+
+        $language=Configuration::get('iyzipay_language');
+
+        if(empty($language))
+        {
+          $languageIsoCode = $languages['iso_code'];
+        }
+        else
+        {
+          $languageIsoCode = strtolower(Configuration::get('iyzipay_language'));
+        }
+
 
         $pwi_logo = Media::getMediaPath(_PS_MODULE_DIR_.$this->name."/views/img/pay_with_iyzico.png");
         $title = "Alışverişlerini hızla ve kolayca iyzico ile Öde!";
@@ -420,9 +408,23 @@ class Paywithiyzico extends PaymentModule
      */
     private function successAssign($paywithiyzicoResponse)
     {
+        $iyzipay_language = Configuration::get('iyzipay_language');
+
 
         $this->context->smarty->assign('pwi', $paywithiyzicoResponse->payWithIyzicoPageUrl);
+        $this->context->smarty->assign('form_class', Configuration::get('iyzipay_display'));
+        if(empty($iyzipay_language))
+              {
+                $this->context->smarty->assign('contract_text', $this->l('Contract approval is required for the payment form to be active.'));
+              }
+        elseif ($iyzipay_language == 'TR')
+        {
+                $this->context->smarty->assign('contract_text', 'Ödeme formunun aktif olması için sözleşme onayı gereklidir.');
+              }
+        else {
+                $this->context->smarty->assign('contract_text', 'Contract approval is required for the payment form to be active.');
 
+              }
         return $this->paymentOptionResult();
 
     }

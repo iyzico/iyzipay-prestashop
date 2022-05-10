@@ -99,7 +99,7 @@
                     if ($("input[id='conditions_to_approve[terms-and-conditions]']").is(':checked')) {
 
                         $("#pwiLoadingContainer").hide();
-                        window.location.href = pwi;
+                        $("#paywithiyzico-checkout-form").show();
                         $('#pwiCards').hide();
 
                     } else {
@@ -122,7 +122,7 @@
 
 
                             $("#pwiLoadingContainer").hide();
-                            window.location.href = pwi;
+                            $("#paywithiyzico-checkout-form").show();
                             $('#pwiCards').hide();
 
 

@@ -28,7 +28,7 @@
 <p>
 <?php echo $PwiInstallmentFee; exit; ?>
 	<br />- {l s='Amount' mod='paywithiyzico'} : <span class="price"><strong>{$total|escape:'htmlall':'UTF-8'}</strong></span>
-{if $PwiInstallmentFee != ''}	
+{if $PwiInstallmentFee != ''}
 	<br />- {l s='installment Fee' mod='paywithiyzico'} : <span class="PwiInstallmentFee"><strong>{$PwiInstallmentFee|escape:'html':'UTF-8'}</strong></span>
 {/if}
 	<br />- {l s='Reference' mod='paywithiyzico'} : <span class="reference"><strong>{$reference|escape:'html':'UTF-8'}</strong></span>

@@ -45,9 +45,9 @@ class PaywithiyzicoObject
         $shipping = $params['cart']->getOrderTotal(true, Cart::ONLY_SHIPPING);
         $basketItems = $params['cart']->getProducts();
         $httpProtocol = !Configuration::get('PS_SSL_ENABLED') ? 'http://' : 'https://';
-
+        
         $paywithiyzico = new stdClass();
-        $paywithiyzico->locale = $context->language->iso_code;
+        $paywithiyzico->locale = Configuration::get('iyzipay_language');
         $paywithiyzico->conversationId = $params['cookie']->id_cart;
         $paywithiyzico->price = PaywithiyzicoHelper::orderProductCalc($basketItems, $shipping);
         $paywithiyzico->paidPrice = PaywithiyzicoHelper::priceParser($params['cart']->getOrderTotal());
@@ -192,10 +192,10 @@ class PaywithiyzicoObject
         $form_object->currency = $objectData->currency;
         $form_object->paidPrice = $objectData->paidPrice;
         $form_object->cancelUrl = $objectData->cancelUrl;
-       
+
 
         return $form_object;
-    
+
     }
 
     /**

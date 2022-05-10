@@ -28,7 +28,11 @@
 		<div class="col-md-2" style="text-align:center;">
 			<?xml version="1.0" encoding="UTF-8"?>
 			<svg width="127px" height="40px" viewBox="0 0 127 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-				<title>iyzico ile Ode@</title>
+				{if $languageIsoCode == 'tr'}
+				<title>iyzico ile Ode</title>
+				{else}
+				<title>Pay With Iyzica</title>
+				{/if}
 				<defs>
 					<linearGradient x1="90.2554899%" y1="50%" x2="0%" y2="50%" id="linearGradient-1">
 						<stop stop-color="#1E64FF" offset="0%"></stop>
@@ -50,8 +54,14 @@
 		<p style="text-align:left;"><strong>V</strong>: {$payWithIyzicoVersion}</p>
 		</div>
 		<div class="col-md-10">
-		<h1>Hemen Başla !</h1>
-<p><a href="https://merchant.paywithiyzico.com">https://merchant.paywithiyzico.com</a> veya <a href="https://sandbox-merchant.paywithiyzico.com">https://sandbox-merchant.paywithiyzico.com</a> adresi üzerinden müşteri bilgileriniz ile giriş yapınız. Panele eriştiğiniz sırada sağ üst köşede profil bilgilerinizi göreceksiniz. Profil bilgilerinizin üzerine tıkladıktan sonra “Ayarlar” menüsüne tıklayınız. “API Anahtları" alanından “API Anahtarı ve Güvenlik Anahtarı" bilgilerinizi kopyalayıp PrestaShop paywithiyzico panelinde bulunan “API Anahtarı” ve “Güvenlik Anahtarı” alanlarına yapıştırınız..</p>
-		</div>		
+			{if $languageIsoCode == 'tr'}
+			<h1>Hemen Başla !</h1>
+	<p><a href="https://merchant.iyzipay.com">https://merchant.iyzipay.com</a> veya <a href="https://sandbox-merchant.iyzipay.com">https://sandbox-merchant.iyzipay.com</a> adresi üzerinden müşteri bilgileriniz ile giriş yapınız. Panele eriştiğiniz sırada sağ üst köşede profil bilgilerinizi göreceksiniz. Profil bilgilerinizin üzerine tıkladıktan sonra “Ayarlar” menüsüne tıklayınız. “API Anahtları" alanından “API Anahtarı ve Güvenlik Anahtarı" bilgilerinizi kopyalayıp PrestaShop paywithiyzico panelinde bulunan “API Anahtarı” ve “Güvenlik Anahtarı” alanlarına yapıştırınız..</p>
+			{else}
+			<h1>Start Now !</h1>
+	<p><a href="https://merchant.paywithiyzico.com">https://merchant.iyzipay.com</a> or <a href="https://sandbox-merchant.iyzipay.com">https://sandbox-merchant.iyzipay.com</a> Log in with your customer information. When you access the panel, you will see your profile information in the upper right corner. After clicking on your profile information, click on the “Settings” menu. Copy your "API Key and Security Key" information from the "API Keys" field and paste it into the "API Key" and "Security Key" fields in the PrestaShop paywithiyzico panel.</p>
+{/if}
+
+		</div>
 	</div>
 </div>
