@@ -1,7 +1,7 @@
 # iyzico - PrestaShop Payment Gateway
 ------------
 * Create live account at https://merchant.iyzipay.com
-* Create test account at https://sandbox-iyzipay.com
+* Create test account at https://sandbox-merchant.iyzipay.com
 
 
 # Requirements
