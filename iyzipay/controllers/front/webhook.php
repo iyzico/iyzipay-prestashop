@@ -56,7 +56,7 @@ class IyzipayWebhookModuleFrontController extends ModuleFrontController {
 
     public function iyzicoWebhookResponse(){
         $iyzicoCallback = new IyzipayCallBackModuleFrontController();
-        $responseCode = $iyzicoCallback->init("webhook", $this->paymentConversationId, $this->token);
+        $responseCode = $iyzicoCallback->init("webhook", $this->paymentConversationId, $this->token , $this->iyziEventType);
         return $responseCode;
     }
 
@@ -67,5 +67,12 @@ class IyzipayWebhookModuleFrontController extends ModuleFrontController {
         exit();
     }
 
-}
+    public static function webhookResponseOrderNote($message,$orderStatus,$orderId){
 
+      $query = "UPDATE `"._DB_PREFIX_."orders` SET note='".$message."', current_state = '".$orderStatus."' WHERE id_cart =".$orderId; //end of the query
+       Db::getInstance()->Execute($query);
+       return $query;
+
+    }
+
+}

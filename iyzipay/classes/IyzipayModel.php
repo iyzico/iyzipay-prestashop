@@ -73,9 +73,9 @@ class IyzipayModel extends ObjectModel
     public static function insertIyzicoOrder($iyzicoLocalOrder)
     {
 
-        $tableName = 'iyzipay_order';
+        
 
-        $sql = 'INSERT INTO '._DB_PREFIX_.bqSQL($tableName).'(`payment_id`,`order_id`,`total_amount`,`status`)
+        $sql = 'INSERT INTO '._DB_PREFIX_.'iyzipay_order (`payment_id`,`order_id`,`total_amount`,`status`)
 		        VALUES
 		        (\''.$iyzicoLocalOrder->orderId.'\',
 		         \''.$iyzicoLocalOrder->paymentId.'\',

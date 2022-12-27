@@ -44,7 +44,7 @@ class Iyzipay extends PaymentModule
     {
         $this->name = 'iyzipay';
         $this->tab = 'payments_gateways';
-        $this->version = '1.2.0';
+        $this->version = '2.0.0';
         $this->author = 'iyzico';
         $this->need_instance = 1;
 
@@ -89,7 +89,11 @@ class Iyzipay extends PaymentModule
         {
           $this->checkAndSetCookieSameSite();
         }
-         Configuration::updateValue('PS_CONDITIONS_CMS_ID',0);
+
+
+
+
+        Configuration::updateValue('PS_CONDITIONS_CMS_ID',0);
 
 
 
@@ -111,6 +115,10 @@ class Iyzipay extends PaymentModule
         $iso_code = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT'));
 
         $this->setIyziWebhookUrlKey();
+
+        $this->iyzipaySetWebhookUrlKey();
+
+
 
 
         include(dirname(__FILE__).'/sql/install.php');
@@ -158,9 +166,13 @@ class Iyzipay extends PaymentModule
             && Configuration::deleteByName('iyzipay_overlay_token')
             && Configuration::deleteByName('iyzipay_pwi_first_enabled_status')
             && Configuration::deleteByName('iyzipay_language')
+            && Configuration::deleteByName('thankyou_page_text')
+            && Configuration::deleteByName('iyzipay_active_webhook_url')
             && Configuration::updateValue('PS_CONDITIONS_CMS_ID',3)
             && parent::uninstall();
     }
+
+
 
     /**
      * Load the configuration form
@@ -173,12 +185,14 @@ class Iyzipay extends PaymentModule
         if (((bool)Tools::isSubmit('submitIyzipayModule')) == true) {
             $this->postProcess();
         }
-        $sslControl = $_SERVER['HTTPS'] ;
 
 
         $this->registerHook('ModuleRoutes');
 
         $this->setIyziWebhookUrlKey();
+
+        $this->initSetWebhookUrlKey();
+
 
         $this->context->smarty->assign('module_dir', $this->_path);
 
@@ -190,11 +204,17 @@ class Iyzipay extends PaymentModule
 
         $this->context->smarty->assign('languageIsoCode', $this->context->language->iso_code);
 
-        $this->context->smarty->assign('sslEnabled', $sslControl);
+        $httpsProtocol = empty($_SERVER['HTTPS']);
+
+        $this->context->smarty->assign('sslEnabled', $httpsProtocol);
 
         $this->context->smarty->assign('iyziApiType', Configuration::get('iyzipay_api_type'));
 
         $this->context->smarty->assign('cookieSamesite', Configuration::get('PS_COOKIE_SAMESITE'));
+
+        $webhookActiveButton = Configuration::get('iyzipay_active_webhook_url');
+        $this->context->smarty->assign('webhookActiveButton', $this->iyzicoWebhookSubmitbutton());
+
 
         $pwi_status_after_enabled_pwi = Configuration::get('iyzipay_pwi_first_enabled_status', true);
         if (!Module::isEnabled('paywithiyzico') && $pwi_status_after_enabled_pwi != 1){
@@ -257,7 +277,7 @@ class Iyzipay extends PaymentModule
         return array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l('Settings'),
+                    'title' => $this->l('Settings') ,
                     'icon' => 'icon-cogs',
                 ),
                 'input' => array(
@@ -374,6 +394,7 @@ class Iyzipay extends PaymentModule
                         'type' => 'hidden',
                         'name' => 'iyzipay_overlay_token',
                     ),
+
                     array(
                         'type' => 'hidden',
                         'name' => 'iyzipay_webhook_url_key',
@@ -403,6 +424,7 @@ class Iyzipay extends PaymentModule
             'iyzipay_display' => Configuration::get('iyzipay_display', true),
             'iyzipay_overlay_position' => Configuration::get('iyzipay_overlay_position', true),
             'iyzipay_overlay_token' => Configuration::get('iyzipay_overlay_token', true),
+            'iyzipay_active_webhook_url' => Configuration::get('iyzipay_active_webhook_url', true),
             'iyzipay_language' => Configuration::get('iyzipay_language', true),
             'PS_COOKIE_SAMESITE' => Configuration::get('PS_COOKIE_SAMESITE' , true),
 
@@ -509,6 +531,7 @@ class Iyzipay extends PaymentModule
             array(
                 'token' => Configuration::get('iyzipay_overlay_token'),
                 'position' => Configuration::get('iyzipay_overlay_position'),
+
             )
         );
 
@@ -595,6 +618,77 @@ class Iyzipay extends PaymentModule
         return $requestResponse;
     }
 
+
+
+    public function iyzipaySetWebhookUrlKey() {
+
+            $webhookActive = Configuration::get('iyzipay_active_webhook_url');
+            if(empty($webhookActive))
+            {
+              Configuration::updateValue('iyzipay_active_webhook_url',0);
+            }
+
+
+
+      }
+
+    public function initSetWebhookUrlKey() {
+
+      $apiKey = Configuration::get('iyzipay_api_key');
+      $secretKey = Configuration::get('iyzipay_secret_key');
+
+
+      if(isset($apiKey) && isset($secretKey) && isset($_SERVER['HTTPS']))
+      {
+      if(Configuration::get('iyzipay_active_webhook_url') == 0)
+      {
+          $randNumer = rand(100000, 99999999);
+          $endpoint = Configuration::get('iyzipay_api_type');
+          $setWebhookUrl = new stdClass();
+          $setWebhookUrl->webhookUrl = Tools::getHttpHost(true) . __PS_BASE_URI__ .'iyzico/api/webhook/'. $this->getIyziWebhookUrlKey();
+
+          $pkiString = IyzipayPkiStringBuilder::pkiStringGenerate($setWebhookUrl);
+          $authorization = IyzipayPkiStringBuilder::authorization($pkiString, $apiKey, $secretKey, $randNumer);
+
+          $iyzipaywebhookJson = json_encode($setWebhookUrl, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+          $requestResponseWebhook = IyzipayRequest::iyzipayPostWebhook($endpoint ,$iyzipaywebhookJson, $authorization);
+
+          if(isset($requestResponseWebhook->merchantNotificationUpdateStatus))
+          {
+            if($requestResponseWebhook->merchantNotificationUpdateStatus == 'UPDATED' || $requestResponseWebhook->merchantNotificationUpdateStatus == 'CREATED')
+          {
+            Configuration::updateValue('iyzipay_active_webhook_url',1);
+            return true;
+
+          } else {
+              Configuration::updateValue('iyzipay_active_webhook_url',2);
+              return true;
+            }
+
+        }
+    }
+  }
+
+    }
+
+    /* Submit Button Webhook */
+      public static function iyzicoWebhookSubmitbutton()
+     {
+       $webhookActiveButton = Configuration::get('iyzipay_active_webhook_url');
+       if($webhookActiveButton == 2)
+       {
+         $htmlButton = '<form action="" method="post">
+                       <button class="btn btn-primary" type="submit" name="button">Aktifleştir</button> *Problem yaşıyorsanız, iyzico webhook sistemini aktif etmek için iletişime geçiniz.
+                        <a href="mailto:entegrasyon@iyzico.com">entegrasyon@iyzico.com</a></form>';
+          if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['button']))
+          {
+              Configuration::updateValue('iyzipay_active_webhook_url',0);
+          }
+         return $htmlButton;
+       }
+
+     }
+
     /**
      * This hook is used to display the order confirmation page.
      */
@@ -611,13 +705,18 @@ class Iyzipay extends PaymentModule
             $this->smarty->assign('status', 'ok');
         }
 
+        $thankYouPage = Configuration::get('thankyou_page_text') ;
+
         $this->smarty->assign(array(
             'id_order' => $order->id,
             'reference' => $order->reference,
             'params' => $params,
+            'thankYouPage' => $thankYouPage,
             'total' => Tools::displayPrice($this->context->cookie->totalPrice, $this->context->currency, false),
             'installmentFee' => Tools::displayPrice($this->context->cookie->installmentFee, $this->context->currency, false),
         ));
+
+
 
         return $this->display(__FILE__, 'views/templates/front/confirmation.tpl');
     }

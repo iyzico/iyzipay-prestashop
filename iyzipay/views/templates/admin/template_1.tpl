@@ -103,7 +103,8 @@
 			<p><a href="https://merchant.iyzipay.com">https://merchant.iyzipay.com</a> veya <a href="https://sandbox-merchant.iyzipay.com">https://sandbox-merchant.iyzipay.com</a> adresi üzerinden müşteri bilgileriniz ile giriş yapınız. Panele eriştiğiniz sırada sağ üst köşede profil bilgilerinizi göreceksiniz. Profil bilgilerinizin üzerine tıkladıktan sonra “Ayarlar” menüsüne tıklayınız. “API Anahtları" alanından “API Anahtarı ve Güvenlik Anahtarı" bilgilerinizi kopyalayıp PrestaShop iyzico panelinde bulunan “API Anahtarı” ve “Güvenlik Anahtarı” alanlarına yapıştırınız..</p>
 			<p><strong>*PrestaShop admin paneli içnde Yapılandır > Gelişmiş Parametler > Yönetim > Genel > Cookie SameSite Hiçbiri(None) yapmayı unutmayınız.</strong></p>
 			<hr>
-			<p style="font-size:15px;"><b>Webhook URL</b>  : {$websiteBaseUrl}iyzico/api/webhook/{$webhookUrlKey}</p>
+			<p style="font-size:15px;"><b>Webhook URL</b>  : {$websiteBaseUrl}iyzico/api/webhook/{$webhookUrlKey}<br>
+				{$webhookActiveButton}
 			<p><strong>*Webhook entegrasyonunu yapmayı unutmayınız.</strong></p>
 			<hr>
 			{else}
@@ -112,10 +113,11 @@
 			<p><strong>*Configure > Advanced Parameters > General > Cookie SameSite Don't forget to set None.</strong></p>
 			<hr>
 			<b>Webhook URL</b>  : {$websiteBaseUrl}iyzico/api/webhook/{$webhookUrlKey}
+			{$webhookActiveButton}
 			<p><strong>*Don't forget to do webhook Integration.</strong></p>
 			<hr>
 			{/if}
-			{if empty($sslEnabled) && $iyziApiType == 'https://api.iyzipay.com'}
+			{if $sslEnabled && $iyziApiType == 'https://api.iyzipay.com'}
 			{if $languageIsoCode == 'tr'}
         <div class="alert alert-warning" role="alert">
            Gerçek Ödeme alabilmek için SSL aktif etmeniz gerekmektedir. Test hesaplar için geçerli değildir.

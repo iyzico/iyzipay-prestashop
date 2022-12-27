@@ -26,6 +26,19 @@
 
 class IyzipayRequest
 {
+  /**
+   * @param $endpoint
+   * @param $json
+   * @param $authorization
+   * @return mixed
+   */
+  public static function iyzipayPostWebhook($endpoint, $json, $authorization)
+  {
+      $endpoint .= '/payment/notification/update';
+
+      return IyzipayRequest::curlPost($json, $authorization, $endpoint);
+  }
+
     /**
      * @param $endpoint
      * @param $json

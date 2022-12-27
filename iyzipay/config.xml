@@ -2,7 +2,7 @@
 <module>
     <name>iyzipay</name>
     <displayName><![CDATA[iyzico Checkout Form Module]]></displayName>
-    <version><![CDATA[1.1.2]]></version>
+    <version><![CDATA[2.0.0]]></version>
     <description><![CDATA[iyzico Checkout Form Module for PrestaShop]]></description>
     <author><![CDATA[iyzipay]]></author>
     <tab><![CDATA[payments_gateways]]></tab>

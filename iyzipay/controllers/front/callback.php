@@ -40,7 +40,7 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
         $this->context              = Context::getContext();
     }
 
-    public function init($webhook = null, $webhookPaymentConversationId = null ,$webhookToken = null)
+    public function init($webhook = null, $webhookPaymentConversationId = null ,$webhookToken = null ,$webhookIyziEventType = null)
     {
         parent::init();
 
@@ -87,11 +87,18 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
             $responseObject  = json_encode($responseObject, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
             $requestResponse = IyzipayRequest::checkoutFormRequestDetail($endpoint, $responseObject, $authorization);
 
-            if ($webhook == "webhook" && $requestResponse->status == 'failure'){
+
+            $thankYouPage = Configuration::get('thankyou_page_text',0);
+            if(!$thankYouPage)
+            {
+              Configuration::updateValue('thankyou_page_text',0);
+            }
+
+            if ($webhook == "webhook" && $webhookIyziEventType != 'CREDIT_PAYMENT_AUTH' && $requestResponse->status == 'failure'){
                 return IyzipayWebhookModuleFrontController::webhookHttpResponse("errorCode: ".$requestResponse->errorCode ." - " . $requestResponse->errorMessage, 404);
             }
 
-            if ($webhook == "webhook"){
+            if ($webhook == "webhook" ){
                 $orderId = $requestResponse->basketId;
                 $cartId = $requestResponse->basketId;
                 $cart = new Cart($cartId);
@@ -100,6 +107,31 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
                 $customerSecureKey = $customer->secure_key;
 
                 $order = Order::getByCartId($cart->id);
+
+                if($webhookIyziEventType == 'CREDIT_PAYMENT_PENDING' && $requestResponse->paymentStatus == 'PENDING_CREDIT')
+                {
+                  $orderMessage = 'Alışveriş kredisi başvurusu sürecindedir.';
+                  IyzipayWebhookModuleFrontController::webhookResponseOrderNote($orderMessage ,3 , $requestResponse->basketId);
+                  return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Status Updated - Alışveriş kredisi başvurusu sürecindedir.", 200);
+                }
+                if($webhookIyziEventType == 'CREDIT_PAYMENT_AUTH' && $requestResponse->status == 'success')
+                {
+                   $orderMessage = 'Alışveriş kredisi işlemi başarıyla tamamlandı.';
+                   IyzipayWebhookModuleFrontController::webhookResponseOrderNote($orderMessage , 2 ,$requestResponse->basketId);
+                   return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Status Updated - Alışveriş kredisi işlemi başarıyla tamamlandı.", 200);
+                }
+                if($webhookIyziEventType =='CREDIT_PAYMENT_INIT' && $requestResponse->status == 'INIT_CREDIT')
+                {
+                   $orderMessage = 'Alışveriş kredisi işlemi başlatıldı.';
+                   IyzipayWebhookModuleFrontController::webhookResponseOrderNote($orderMessage , 3 , $requestResponse->basketId);
+                   return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Status Updated - Alışveriş kredisi işlemi başlatıldı.", 200);
+                }
+                if($webhookIyziEventType == 'CREDIT_PAYMENT_AUTH' && $requestResponse->status == 'FAILURE')
+                {
+                   $orderMessage = 'Alışveriş kredisi işlemi başarısız sonuçlandı.';
+                   IyzipayWebhookModuleFrontController::webhookResponseOrderNote($orderMessage , 6 , $requestResponse->basketId);
+                   return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Status Updated - Alışveriş kredisi işlemi başarısız sonuçlandı.", 200);
+                }
 
                 if ($order && $order->getCurrentState() == (int)Configuration::get('PS_OS_PAYMENT')){
                     return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Exist - Sipariş zaten var.", 200);
@@ -113,10 +145,22 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
 
             if($requestResponse->paymentStatus == 'INIT_BANK_TRANSFER' && $requestResponse->status == 'success') {
                 $orderMessage = 'iyzico Banka havalesi/EFT ödemesi bekleniyor.';
+                Configuration::updateValue('thankyou_page_text',0);
                 $this->module->validateOrder($orderId, Configuration::get('PS_OS_BANKWIRE'), $cartTotal, $this->module->displayName, $orderMessage, $extraVars, NULL, false, $customerSecureKey);
-
                 Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
             }
+
+            if($webhook != 'webhook' && $requestResponse->paymentStatus == 'PENDING_CREDIT' && $requestResponse->status == 'success') {
+                Configuration::updateValue('thankyou_page_text',1);
+                $orderMessage = 'Alışveriş kredisi başvurusu sürecindedir.';
+                //Configuration::updateValue('iyzipay_active_webhook_url', $requestResponse->token);
+                $this->module->validateOrder($orderId, Configuration::get('PS_OS_PREPARATION'), $cartTotal, $this->module->displayName, $orderMessage, $extraVars, NULL, false, $customerSecureKey);
+                Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+            }
+
+            Configuration::updateValue('thankyou_page_text',0);
+
+
 
 
             $requestResponse->installment     = (int)   $requestResponse->installment;
@@ -210,6 +254,7 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
 
                 $this->module->validateOrder($orderId, Configuration::get('PS_OS_PAYMENT'), $cartTotal, $this->module->displayName, $installmentMessage, $extraVars, NULL, false, $customerSecureKey);
 
+
             if (isset($requestResponse->installment) && !empty($requestResponse->installment) && $requestResponse->installment > 1) {
                 /* Invoice true */
 
@@ -249,6 +294,7 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
             if ($webhook == 'webhook'){
                 return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Created by Webhook - Sipariş webhook tarafından oluşturuldu.", 200);
             }
+
 
             Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
         } catch (Exception $e) {
