@@ -94,6 +94,14 @@ class PaywithiyzicoCallBackModuleFrontController extends ModuleFrontController
                 Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
             }
 
+            if($requestResponse->paymentStatus == 'PENDING_CREDIT' && $requestResponse->status == 'success') {
+              $orderMessage = 'Alışveriş kredisi başvurusu sürecindedir.';
+              Configuration::updateValue('thankyou_page_text',1);
+              $this->module->validateOrder($orderId, Configuration::get('PS_OS_PREPARATION'), $cartTotal, $this->module->displayName, $orderMessage, $extraVars, NULL, false, $customerSecureKey);
+              Tools::redirect('index.php?controller=order-confirmation&id_cart='.$orderId.'&id_module='.(int)$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key);
+          }
+          Configuration::updateValue('thankyou_page_text',0);
+
             if (empty($orderId)) {
                 if ($token) {
                     $this->cancelPayment($locale, $requestResponse->paymentId, $remoteIpAddr, $apiKey, $secretKey, $rand, $endpoint);
