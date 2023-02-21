@@ -45,7 +45,7 @@ class PaywithiyzicoObject
         $shipping = $params['cart']->getOrderTotal(true, Cart::ONLY_SHIPPING);
         $basketItems = $params['cart']->getProducts();
         $httpProtocol = !Configuration::get('PS_SSL_ENABLED') ? 'http://' : 'https://';
-        
+
         $paywithiyzico = new stdClass();
         $paywithiyzico->locale = Configuration::get('iyzipay_language');
         $paywithiyzico->conversationId = $params['cookie']->id_cart;
@@ -56,7 +56,7 @@ class PaywithiyzicoObject
         $paywithiyzico->paymentGroup = 'PRODUCT';
         $paywithiyzico->callbackUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'index.php?module_action=init&fc=module&module=paywithiyzico&controller=callback';
         $paywithiyzico->cancelUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__;
-        $paywithiyzico->paymentSource = _PS_VERSION_.'|PRESTASHOP|PIE|1.0.3';
+        $paywithiyzico->paymentSource = _PS_VERSION_.'|PRESTASHOP|PIE|1.1.0';
 
         return $paywithiyzico;
     }
