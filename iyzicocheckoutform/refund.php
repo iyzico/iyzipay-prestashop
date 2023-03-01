@@ -21,9 +21,9 @@ $message = array(
 
 if(Tools::getValue('token')) {
 
-    if(Tools::getValue('token')!==$token ) {      
-        
-        
+    if(Tools::getValue('token')!==$token ) {
+
+
         echo json_encode($message);
         exit;
     }
@@ -31,7 +31,7 @@ if(Tools::getValue('token')) {
     $cookie = new Cookie('psAdmin');
 
     if(!$cookie->id_employee){
-        
+
         $message['response'] = 'Admin girişiniz zaman aşımına uğramış olabilir.';
         echo json_encode($message);
         exit;
@@ -47,17 +47,17 @@ if(Tools::getValue('token')) {
 try {
     IyzipayBootstrap::init();
     $error_msg = '';
-    
+
 
     $payment_id     = pSQL(Tools::getValue('payment_id'));
     $refunded       = pSQL(Tools::getValue('refunded'));
     $refund_price   = pSQL(Tools::getValue('refund_price'));
     $language       = Tools::getValue('language');
 
-    
+
     $query = 'SELECT * FROM ' . _DB_PREFIX_ . 'iyzico_cart_detail WHERE payment_transaction_id = "' . $payment_id . '"';
     $refund_amount = Db::getInstance()->ExecuteS($query);
-    
+
     //iyzico order details not found
     if (empty($refund_amount)) {
         $message = array(
@@ -67,26 +67,26 @@ try {
         echo json_encode($message);
         exit;
     }
-   
+
     $total_refund = $refund_amount[0]['paid_price'] - $refund_amount[0]['total_refunded_amount'];
     $refund = number_format($refund_price, 2, '.', '');
-    
+
     //Set api,secret and base url
     $options = new \Iyzipay\Options();
     $options->setApiKey(Configuration::get('IYZICO_FORM_LIVE_API_ID'));
     $options->setSecretKey(Configuration::get('IYZICO_FORM_LIVE_SECRET'));
-    $options->setBaseUrl("https://api.iyzipay.com");
+    $options->setBaseUrl(Configuration::get('IYZICO_FORM_BASEURL'));
 
     //refund amount validation.
     if ($refund > number_format($total_refund, 2, '.', '')) {
         $message = array(
             'msg' => 'Fail',
-            'response' => 'You cannot refund more than ' . $total_refund . '  ' . $refund_amount[0]['currency']  
+            'response' => 'You cannot refund more than ' . $total_refund . '  ' . $refund_amount[0]['currency']
         );
         echo json_encode($message);
         exit;
     }
-    
+
    //refund order
     if (empty($payment_id)) {
         $message = array(
@@ -96,15 +96,15 @@ try {
         echo json_encode($message);
         exit;
     }
-    
+
     if (!empty($language) && $language == 'tr') {
         $lang = 'tr';
     } else {
         $lang = 'en';
     }
-    
+
     $locale = ($lang == "tr") ? Iyzipay\Model\Locale::TR : Iyzipay\Model\Locale::EN;
-    
+
     $redirect_url = $_SERVER['HTTP_REFERER'];
 
     // create request class
@@ -115,7 +115,7 @@ try {
     $request->setPrice($refund_price);
     $request->setCurrency($refund_amount[0]['currency']);
     $request->setIp((string) Tools::getRemoteAddr());
-    
+
     //request form api log
     $insert_api_log = Db::getInstance()->insert("iyzico_api_log", array(
         'id' => Tools::getValue('id'),
