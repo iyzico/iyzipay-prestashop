@@ -54,7 +54,7 @@ class PaywithiyzicoObject
         $paywithiyzico->paymentGroup = 'PRODUCT';
         $paywithiyzico->callbackUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'index.php?module_action=init&fc=module&module=paywithiyzico&controller=callback';
         $paywithiyzico->cancelUrl = $httpProtocol.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__;
-        $paywithiyzico->paymentSource = _PS_VERSION_.'|PRESTASHOP|AIR|1.0.0|PWI';
+        $paywithiyzico->paymentSource = _PS_VERSION_.'|PRESTASHOP|AIR|1.0.5|PWI';
 
         return $paywithiyzico;
     }
@@ -190,10 +190,10 @@ class PaywithiyzicoObject
         $form_object->currency = $objectData->currency;
         $form_object->paidPrice = $objectData->paidPrice;
         $form_object->cancelUrl = $objectData->cancelUrl;
-       
+
 
         return $form_object;
-    
+
     }
 
     /**

@@ -9,13 +9,13 @@ include_once 'classes/PaywithiyzicoObject.php';
 
 class Paywithiyzico extends PaymentModule{
 
-    public static $baseUrl = "https://sandbox-api.iyzipay.com";
+    //public static $baseUrl = Configuration::get('IYZICO_FORM_BASEURL');
 
     public function __construct()
     {
         $this->name = "paywithiyzico";
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = '1.0.5';
         $this->author = 'iyzico';
         $this->bootstrap = true;
 
@@ -28,7 +28,7 @@ class Paywithiyzico extends PaymentModule{
 
         $this->checkAndSetCookieSameSite();
     }
-    
+
     public function install(){
 
         if (!parent::install()
@@ -128,7 +128,7 @@ class Paywithiyzico extends PaymentModule{
         $apiKey = Configuration::get('IYZICO_FORM_LIVE_API_ID');
         $secretKey = Configuration::get('IYZICO_FORM_LIVE_SECRET');
         $rand = rand(100000, 99999999);
-        $endpoint = self::$baseUrl;
+        $endpoint = Configuration::get('IYZICO_FORM_BASEURL');
 
         $paywithiyzico = PaywithiyzicoObject::option($params, $context);
         $paywithiyzico->buyer = PaywithiyzicoObject::buyer($billingAddress);
@@ -294,7 +294,7 @@ class Paywithiyzico extends PaymentModule{
                 .$phpVersion.''
                 :
                 'iyzico ile Öde modülünün çalışması için minimum PHP versiyonunuz '.$requiredVersion. ' olmalıdır.
-                PHP versiyonunuzu yükseltmek için hosting firmanızla iletişime geçebilirsiniz. Sunucu PHP 
+                PHP versiyonunuzu yükseltmek için hosting firmanızla iletişime geçebilirsiniz. Sunucu PHP
                 versiyonunuz: '.$phpVersion.'';
         }
         return false;

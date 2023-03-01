@@ -45,7 +45,7 @@ class PaywithiyzicoCallBackModuleFrontController extends ModuleFrontController{
             $apiKey          = Configuration::get('IYZICO_FORM_LIVE_API_ID');
             $secretKey       = Configuration::get('IYZICO_FORM_LIVE_SECRET');
             $rand            = rand(100000, 99999999);
-            $endpoint        = Paywithiyzico::$baseUrl;
+            $endpoint        = Configuration::get('IYZICO_FORM_BASEURL');
             $responseObject  = PaywithiyzicoObject::responseObject($orderCartId, $token, $locale);
 
             $pkiString       = PaywithiyzicoPkiStringBuilder::pkiStringGenerate($responseObject);

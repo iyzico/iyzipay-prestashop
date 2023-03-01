@@ -2,7 +2,7 @@
 <module>
 	<name>paywithiyzico</name>
 	<displayName><![CDATA[iyzico ile &Ouml;de]]></displayName>
-	<version><![CDATA[1.0.0]]></version>
+	<version><![CDATA[1.0.5]]></version>
 	<description><![CDATA[Prestashop i&ccedil;in iyzico ile &Ouml;de]]></description>
 	<author><![CDATA[iyzico]]></author>
 	<tab><![CDATA[payments_gateways]]></tab>
