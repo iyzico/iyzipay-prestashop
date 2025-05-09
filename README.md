@@ -6,7 +6,7 @@
 
 # Requirements
 ------------
-* PHP 5.4 and greater.
+* PHP 7.4 and greater.
 * cURL
 * PrestaShop 1.7 and greater.
 
