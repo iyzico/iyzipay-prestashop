@@ -1,0 +1,43 @@
+{
+    "name": "iyzico/prestashop",
+    "description": "iyzico plugin Presta Shop",
+    "type": "prestashop-plugin",
+    "keywords": [
+      "iyzico",
+      "payment",
+      "payment platform"
+    ],
+    "homepage": "https://iyzico.com",
+    "license": "MIT",
+    "extra": {
+      "installer-name": "Iyzipay"
+    },
+    "authors": [
+      {
+        "name": "iyzico",
+        "email": "entegrasyon@iyzico.com",
+        "homepage": "https://iyzico.com",
+        "role": "Developer"
+      }
+    ],
+    "autoload": {
+      "psr-4": {
+        "Iyzipay\\Classes\\": "classes",
+        "Iyzipay\\Controllers\\": "controllers"
+      }
+    },
+    "require": {
+      "php": "^7.2|^7.4|^8.0",
+      "ext-json": "*",
+      "ext-zip": "*",
+      "iyzico/iyzipay-php": "2.0.58",
+      "ext-simplexml": "*",
+      "ext-openssl": "*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+      "prepend-autoloader": false
+    }
+  }
+  
