@@ -49,7 +49,7 @@ class Iyzipay extends PaymentModule
         }
 
         Configuration::updateValue('PS_CONDITIONS_CMS_ID', 0);
-        
+
         // Cookie değişkenini oluştur
         if (isset($this->context->cookie) && !isset($this->context->cookie->iyziPaymentType)) {
             $this->context->cookie->iyziPaymentType = null;
@@ -444,13 +444,13 @@ class Iyzipay extends PaymentModule
         }
 
         $paymentOptions = $this->successAssign($iyzicoCheckoutFormResponse);
-        
+
         // Pay with iyzico option if enabled
         if (Configuration::get('iyzipay_pwi_enabled')) {
             $pwi_option = $this->payWithIyzicoOptionResult();
             $paymentOptions = array_merge($paymentOptions, $pwi_option);
         }
-        
+
         return $paymentOptions;
     }
 
@@ -612,14 +612,21 @@ class Iyzipay extends PaymentModule
 
         $thankYouPage = Configuration::get('thankyou_page_text');
 
-        $this->smarty->assign(array(
+        $smartyAssignArr = array(
             'id_order' => $order->id,
             'reference' => $order->reference,
             'params' => $params,
             'thankYouPage' => $thankYouPage,
-            'total' => Tools::displayPrice($this->context->cookie->totalPrice, $this->context->currency, false),
-            'installmentFee' => Tools::displayPrice($this->context->cookie->installmentFee, $this->context->currency, false),
-        ));
+            'total' => Context::getContext()->currentLocale->formatPrice($this->context->cookie->totalPrice, $this->context->currency->iso_code),
+        );
+
+        if ($this->context->cookie->installmentFee != "") {
+            $smartyAssignArr['installmentFee'] = Context::getContext()->currentLocale->formatPrice(floatval($this->context->cookie->installmentFee), $this->context->currency->iso_code);
+        }else {
+            $smartyAssignArr['installmentFee'] = '';
+        }
+
+        $this->smarty->assign($smartyAssignArr);
 
         return $this->display(__FILE__, 'views/templates/front/confirmation.tpl');
     }

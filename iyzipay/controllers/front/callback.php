@@ -69,7 +69,7 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
             $formRequest->setToken($token);
 
             $paymentType = isset($this->context->cookie->iyziPaymentType) ? $this->context->cookie->iyziPaymentType : '';
-            
+
             if ($paymentType == 'pwi') {
                 $request = new \Iyzipay\Request\RetrievePayWithIyzicoRequest();
                 $request->setLocale($locale);
@@ -79,7 +79,7 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
             } else {
                 $requestResponse = \Iyzipay\Model\CheckoutForm::retrieve($formRequest, $options);
             }
-            
+
             $this->context->cookie->iyziPaymentType = null;
 
             if ($webhook == "webhook" && $webhookIyziEventType != 'CREDIT_PAYMENT_AUTH' && $requestResponse->getStatus() == 'failure') {
@@ -218,13 +218,17 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
                 $installmentFee                         = $requestResponsePaidPrice - $cartTotal;
                 $this->context->cookie->installmentFee  = $installmentFee;
 
-                $installmentMessage = '<br><br><strong style="color:#000;">Taksitli Alışveriş: </strong>Toplam ödeme tutarınıza <strong style="color:#000">' . $requestResponseInstallment . ' Taksit </strong> için <strong style="color:red">' . Tools::displayPrice($installmentFee, $currency, false) . '</strong> yansıtılmıştır.<br>';
+                $installmentMessage = '<br><br><strong style="color:#000;">Taksitli Alışveriş: </strong>Toplam ödeme tutarınıza <strong style="color:#000">' . $requestResponseInstallment . ' Taksit </strong> için <strong style="color:red">' . Context::getContext()->currentLocale->formatPrice($installmentFee, $currency->iso_code) . '</strong> yansıtılmıştır.<br>';
 
                 $installmentMessageEmail = '<br><br><strong style="color:#000;">' . $this->l('installmentShopping') . '</strong><br> ' . $this->l('installmentOption') . '<strong style="color:#000"> ' . $requestResponseInstallment . ' ' . $this->l('InstallmentKey') . '<br></strong>' . $this->l('commissionAmount') . '<strong style="color:red">
-                ' . Tools::displayPrice($installmentFee, $currency, false) . '</strong><br>';
+                ' . Context::getContext()->currentLocale->formatPrice($installmentFee, $currency->iso_code) . '</strong><br>';
 
-                $extraVars['{total_paid}']            = Tools::displayPrice($requestResponsePaidPrice, $currency, false);
-                $extraVars['{date}']                  = Tools::displayDate(date('Y-m-d H:i:s'), null, 1) . $installmentMessageEmail;
+                $extraVars['{total_paid}']            = Context::getContext()->currentLocale->formatPrice($requestResponsePaidPrice, $currency->iso_code);
+
+
+                $dateFormat = $context->language->date_format_lite ?? 'd/m/Y';
+                $timeFormat = $context->language->time_format ?? 'H:i:s';
+                $extraVars['{date}'] = date($dateFormat . ' ' . $timeFormat) . $installmentMessageEmail;
             }
 
             $this->module->validateOrder($orderId, Configuration::get('PS_OS_PAYMENT'), $cartTotal, $this->module->displayName, $installmentMessage, $extraVars, NULL, false, $customerSecureKey);
@@ -264,7 +268,18 @@ class IyzipayCallBackModuleFrontController extends ModuleFrontController
                 return IyzipayWebhookModuleFrontController::webhookHttpResponse("Order Created by Webhook - Sipariş webhook tarafından oluşturuldu.", 200);
             }
 
-            Tools::redirect('index.php?controller=order-confirmation&id_cart=' . $orderId . '&id_module=' . (int)$this->module->id . '&id_order=' . $this->module->currentOrder . '&key=' . $customer->secure_key);
+
+            Tools::redirect($this->context->link->getPageLink(
+                'order-confirmation',
+                true,
+                (int) $this->context->language->id,
+                [
+                    'id_cart' => (int) $orderId,
+                    'id_module' => (int) $this->module->id,
+                    'id_order' => (int) $this->module->currentOrder,
+                    'key' => $customer->secure_key,
+                ]
+            ));
         } catch (Exception $e) {
             $errorMessage = $e->getMessage();
 
