@@ -18,7 +18,7 @@ class Iyzipay extends PaymentModule
     {
         $this->name                     = 'iyzipay';
         $this->tab                      = 'payments_gateways';
-        $this->version                  = '2.1.4';
+        $this->version                  = '2.1.5';
         $this->author                   = 'iyzico';
         $this->need_instance            = 1;
         $this->bootstrap                = true;
